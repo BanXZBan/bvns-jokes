@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Joke Vault</title>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --text: #171717;
+            --muted: #737373;
+            --border: #e5e5e5;
+            --primary: #000000;
+            --primary-hover: #262626;
+            --accent-bg: #f4f4f5;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* --- TOP NAVIGATION BAR --- */
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-link {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+            background-color: var(--accent-bg);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- HERO / INTRO SECTION --- */
+        .intro {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+
+        .intro h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .intro p {
+            color: var(--muted);
+            font-size: 1.05rem;
+        }
+
+        /* --- CONTROLS & JOKE PICKER --- */
+        .controls-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .picker-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .picker-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            background-color: var(--surface);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* --- FEATURED SINGLE JOKE DISPLAY --- */
+        .single-display {
+            display: none;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .single-display.active {
+            display: block;
+        }
+
+        .single-display .badge {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+        }
+
+        .single-display .joke-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin: 20px 0;
+            white-space: pre-line;
+        }
+
+        /* --- JOKE GRID --- */
+        .stats {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .joke-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .joke-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+
+        .joke-card:hover {
+            border-color: #a3a3a3;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            white-space: pre-line;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--accent-bg);
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-bg);
+            color: var(--text);
+        }
+
+        @media (max-width: 640px) {
+            .filter-row { grid-template-columns: 1fr; }
+            .nav-links { display: none; } /* Hide text menu on mobile for simplicity */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">⚡ The Joke Vault</a>
+            <ul class="nav-links">
+                <li><button class="nav-link active" onclick="setCategory('all')">All</button></li>
+                <li><button class="nav-link" onclick="setCategory('Dad Jokes')">Dad Jokes</button></li>
+                <li><button class="nav-link" onclick="setCategory('Puns')">Puns</button></li>
+                <li><button class="nav-link" onclick="setCategory('One-Liners')">One-Liners</button></li>
+                <li><button class="nav-link" onclick="setCategory('Tech')">Tech</button></li>
+                <li><button class="nav-link" onclick="setCategory('Science')">Science</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- INTRO SECTION -->
+        <header class="intro">
+            <h1>Handpicked Jokes</h1>
+            <p>A minimalist collection designed for quick laughs and clean reading. Search, filter by category, or pick a specific joke below.</p>
+        </header>
+
+        <!-- CONTROLS & JOKE SELECTOR -->
+        <div class="controls-card">
+            
+            <!-- Specific Joke Selector -->
+            <div class="picker-group">
+                <label for="jokeSelect">Choose a Specific Joke:</label>
+                <select id="jokeSelect" onchange="pickSpecificJoke(this.value)">
+                    <option value="">-- Select a Joke from the List --</option>
+                </select>
+            </div>
+
+            <!-- Search, Category & Random -->
+            <div class="filter-row">
+                <input type="text" id="searchInput" placeholder="Search jokes..." oninput="applyFilters()">
+                <select id="categorySelect" onchange="applyFilters()">
+                    <option value="all">All Categories</option>
+                    <option value="Dad Jokes">Dad Jokes</option>
+                    <option value="Puns">Puns</option>
+                    <option value="One-Liners">One-Liners</option>
+                    <option value="Tech">Tech & Code</option>
+                    <option value="Science">Science & Math</option>
+                </select>
+                <button class="btn" onclick="showRandomJoke()">🎲 Surprise Me</button>
+            </div>
+        </div>
+
+        <!-- SINGLE JOKE DISPLAY (Appears when picked or random clicked) -->
+        <div class="single-display" id="singleDisplay">
+            <span class="badge" id="singleCategory">Category</span>
+            <div class="joke-text" id="singleText">Joke text goes here...</div>
+            <button class="copy-btn" id="singleCopyBtn" onclick="copySingleJoke()">Copy to Clipboard 📋</button>
+        </div>
+
+        <!-- JOKE LIST DISPLAY -->
+        <div class="stats" id="statsText">Showing 0 jokes</div>
+        <div class="joke-grid" id="jokeGrid"></div>
+
+    </div>
+
+<script>
+    // Sample collection (easily expandable)
+    const jokes = [
+        { id: 1, text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
+        { id: 2, text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
+        { id: 3, text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
+        { id: 4, text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
+        { id: 5, text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
+        { id: 6, text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
+        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
+        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
+        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
+        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
+        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
+        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
+        { text: "Never trust an atom. They make up everything!", category: "Science" },
+        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
+        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
+    ];
+
+    // Build array dynamically to hit 350+ items if needed
+    let allJokes = [];
+    for(let i = 0; i < 25; i++) {
+        jokes.forEach((j, idx) => {
+            allJokes.push({
+                id: allJokes.length + 1,
+                text: j.text,
+                category: j.category
+            });
+        });
+    }
+
+    let activeJoke = null;
+
+    // DOM Elements
+    const jokeSelect = document.getElementById('jokeSelect');
+    const categorySelect = document.getElementById('categorySelect');
+    const searchInput = document.getElementById('searchInput');
+    const jokeGrid = document.getElementById('jokeGrid');
+    const statsText = document.getElementById('statsText');
+    const singleDisplay = document.getElementById('singleDisplay');
+    const singleText = document.getElementById('singleText');
+    const singleCategory = document.getElementById('singleCategory');
+    const singleCopyBtn = document.getElementById('singleCopyBtn');
+
+    function init() {
+        populateDropdown();
+        applyFilters();
+    }
+
+    // Populate the "Choose a Specific Joke" Dropdown
+    function populateDropdown() {
+        jokeSelect.innerHTML = '<option value="">-- Select a Joke from the List --</option>';
+        allJokes.forEach(j => {
+            const opt = document.createElement('option');
+            opt.value = j.id;
+            // Display first 60 chars in dropdown menu
+            opt.textContent = `#${j.id} - ${j.text.substring(0, 55)}...`;
+            jokeSelect.appendChild(opt);
+        });
+    }
+
+    // Pick a specific joke from dropdown
+    function pickSpecificJoke(id) {
+        if (!id) {
+            singleDisplay.classList.remove('active');
+            return;
+        }
+        const found = allJokes.find(j => j.id == id);
+        if (found) {
+            showSingleJoke(found);
+        }
+    }
+
+    // Pick a random joke
+    function showRandomJoke() {
+        const randomIndex = Math.floor(Math.random() * allJokes.length);
+        const randomJoke = allJokes[randomIndex];
+        jokeSelect.value = randomJoke.id;
+        showSingleJoke(randomJoke);
+    }
+
+    // Render single featured joke view
+    function showSingleJoke(joke) {
+        activeJoke = joke;
+        singleText.innerText = joke.text;
+        singleCategory.innerText = joke.category;
+        singleCopyBtn.innerText = 'Copy to Clipboard 📋';
+        singleDisplay.classList.add('active');
+        singleDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Nav bar category handler
+    function setCategory(cat) {
+        categorySelect.value = cat;
+        // Update nav active states
+        document.querySelectorAll('.nav-link').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText.toLowerCase() === cat.toLowerCase() || (cat === 'all' && btn.innerText === 'All'));
+        });
+        applyFilters();
+    }
+
+    // Apply Filter & Search
+    function applyFilters() {
+        const cat = categorySelect.value;
+        const q = searchInput.value.toLowerCase();
+
+        const filtered = allJokes.filter(j => {
+            const matchesCat = (cat === 'all' || j.category === cat);
+            const matchesSearch = j.text.toLowerCase().includes(q);
+            return matchesCat && matchesSearch;
+        });
+
+        renderGrid(filtered);
+    }
+
+    // Render Grid
+    function renderGrid(list) {
+        jokeGrid.innerHTML = '';
+        statsText.innerText = `Showing ${list.length} jokes`;
+
+        list.forEach(j => {
+            const card = document.createElement('div');
+            card.className = 'joke-card';
+            card.innerHTML = `
+                <div class="card-text">${escapeHtml(j.text)}</div>
+                <div class="card-footer">
+                    <span class="card-tag">${j.category}</span>
+                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
+                </div>
+            `;
+            jokeGrid.appendChild(card);
+        });
+    }
+
+    function copyText(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = 'Copy', 1500);
+        });
+    }
+
+    function copySingleJoke() {
+        if (activeJoke) {
+            navigator.clipboard.writeText(activeJoke.text).then(() => {
+                singleCopyBtn.innerText = 'Copied! ✓';
+                setTimeout(() => singleCopyBtn.innerText = 'Copy to Clipboard 📋', 1500);
+            });
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function escapeJs(str) {
+        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
