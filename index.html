@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Ultimate Teal Joke Vault</title>
+    <title>The Joke Vault</title>
     <style>
         :root {
-            --bg-grad: linear-gradient(135deg, #042f2e 0%, #0f172a 50%, #064e3b 100%);
-            --glass-bg: rgba(20, 184, 166, 0.08);
-            --glass-border: rgba(45, 212, 191, 0.25);
-            --glass-hover: rgba(20, 184, 166, 0.18);
+            --bg-dark: #041f1e;
+            --bg-grad: linear-gradient(135deg, #021a19 0%, #0a2523 50%, #031413 100%);
+            --sidebar-bg: rgba(4, 28, 27, 0.95);
+            --glass-card: rgba(20, 184, 166, 0.07);
+            --glass-border: rgba(45, 212, 191, 0.2);
+            --glass-hover: rgba(20, 184, 166, 0.16);
             --teal-bright: #2dd4bf;
             --teal-accent: #14b8a6;
-            --teal-dark: #0f766e;
-            --teal-glow: rgba(45, 212, 191, 0.4);
+            --teal-glow: rgba(45, 212, 191, 0.35);
             --text-main: #f0fdfa;
-            --text-muted: #99f6e4;
+            --text-muted: #81e6d9;
             --radius: 16px;
+            --sidebar-width: 270px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -31,43 +33,71 @@
             background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* --- APP CONTAINER (SIDEBAR LEFT + CONTENT RIGHT) --- */
-        .app-layout {
+        /* --- MAIN LAYOUT --- */
+        .app-container {
             display: flex;
             min-height: 100vh;
-            width: 100%;
+            position: relative;
         }
 
-        /* --- LEFT SIDEBAR (ALWAYS ON LEFT) --- */
-        .sidebar-left {
-            width: 280px;
-            background: rgba(4, 47, 46, 0.92);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+        /* --- COLLAPSIBLE SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border-right: 1px solid var(--glass-border);
             padding: 24px 18px;
             display: flex;
             flex-direction: column;
             gap: 24px;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
             height: 100vh;
             overflow-y: auto;
-            flex-shrink: 0;
-            z-index: 100;
+            z-index: 200;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Collapsed state */
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .brand {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 900;
             color: var(--teal-bright);
             letter-spacing: -0.02em;
             display: flex;
             align-items: center;
             gap: 8px;
-            text-shadow: 0 0 12px var(--teal-glow);
+            text-shadow: 0 0 10px var(--teal-glow);
+        }
+
+        .close-sidebar-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: color 0.2s;
+        }
+
+        .close-sidebar-btn:hover {
+            color: #fff;
         }
 
         .sidebar-title {
@@ -75,7 +105,7 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #5eead4;
+            color: var(--teal-bright);
             margin-bottom: 10px;
         }
 
@@ -104,7 +134,7 @@
         }
 
         .cat-btn.active {
-            color: #042f2e;
+            color: #041f1e;
             background: var(--teal-bright);
             font-weight: 700;
             box-shadow: 0 0 15px var(--teal-glow);
@@ -112,7 +142,7 @@
 
         .picker-select {
             width: 100%;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(4, 15, 15, 0.9);
             border: 1px solid var(--glass-border);
             color: var(--teal-bright);
             padding: 10px 12px;
@@ -123,32 +153,67 @@
         }
 
         .picker-select option {
-            background: #042f2e;
+            background: #041f1e;
             color: #fff;
         }
 
-        /* --- MAIN CONTENT AREA --- */
-        .main-stage {
+        /* --- CONTENT AREA & TOPBAR --- */
+        .content-area {
             flex: 1;
-            padding: 30px 35px;
-            overflow-x: hidden;
-            max-width: 1200px;
+            margin-left: var(--sidebar-width);
+            padding: 24px 32px 40px 32px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 1300px;
         }
 
-        /* --- DEDICATED INTRO HERO --- */
+        .content-area.expanded {
+            margin-left: 0;
+        }
+
+        /* --- TOP NAV / TOGGLE BAR --- */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-toggle-btn {
+            background: var(--glass-card);
+            border: 1px solid var(--glass-border);
+            color: var(--teal-bright);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: var(--teal-accent);
+            color: #041f1e;
+            box-shadow: 0 0 12px var(--teal-glow);
+        }
+
+        /* --- HUMAN INTRO HERO --- */
         .intro-hero {
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(15, 23, 42, 0.4) 100%);
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.12) 0%, rgba(3, 20, 19, 0.5) 100%);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(12px);
             border-radius: var(--radius);
-            padding: 32px;
+            padding: 36px;
             margin-bottom: 28px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
-        .hero-badge {
+        .hero-tag {
             display: inline-block;
-            background: rgba(45, 212, 191, 0.2);
+            background: rgba(45, 212, 191, 0.15);
             border: 1px solid var(--teal-bright);
             color: var(--teal-bright);
             font-size: 0.75rem;
@@ -157,25 +222,26 @@
             padding: 4px 12px;
             border-radius: 20px;
             margin-bottom: 12px;
+            letter-spacing: 0.05em;
         }
 
         .intro-hero h1 {
-            font-size: 2.2rem;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
             font-weight: 900;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: #ffffff;
             letter-spacing: -0.02em;
         }
 
         .intro-hero p {
             color: var(--text-muted);
-            font-size: 0.98rem;
-            line-height: 1.5;
-            max-width: 620px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 680px;
         }
 
-        /* --- SEARCH & ACTION CONTROLS --- */
-        .controls-row {
+        /* --- SEARCH & ACTIONS --- */
+        .search-row {
             display: flex;
             gap: 10px;
             margin-bottom: 28px;
@@ -183,7 +249,7 @@
 
         .search-input {
             flex: 1;
-            background: var(--glass-bg);
+            background: var(--glass-card);
             border: 1px solid var(--glass-border);
             color: var(--text-main);
             padding: 12px 18px;
@@ -197,45 +263,25 @@
             box-shadow: 0 0 15px var(--teal-glow);
         }
 
-        .btn-search {
+        .btn-action {
             background: var(--teal-accent);
-            color: #042f2e;
+            color: #041f1e;
             border: none;
             padding: 12px 20px;
             border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-        }
-
-        .btn-search:hover {
-            background: var(--teal-bright);
-            box-shadow: 0 0 12px var(--teal-glow);
-        }
-
-        .btn-random {
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
             white-space: nowrap;
         }
 
-        .btn-random:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px var(--teal-glow);
+        .btn-action:hover {
+            background: var(--teal-bright);
+            box-shadow: 0 0 14px var(--teal-glow);
         }
 
-        /* --- SWIPE CAROUSEL --- */
-        .carousel-wrapper {
-            margin-bottom: 35px;
-        }
-
-        .section-title-bar {
+        /* --- CAROUSEL (SWIPEABLE) --- */
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -260,9 +306,9 @@
         .carousel-track::-webkit-scrollbar { display: none; }
 
         .swipe-card {
-            flex: 0 0 340px;
+            flex: 0 0 320px;
             scroll-snap-align: start;
-            background: var(--glass-bg);
+            background: var(--glass-card);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(12px);
             border-radius: var(--radius);
@@ -270,7 +316,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 190px;
+            min-height: 180px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
             transition: border-color 0.2s;
         }
@@ -292,7 +338,7 @@
         }
 
         .swipe-card .body {
-            font-size: 1.02rem;
+            font-size: 1rem;
             line-height: 1.5;
             color: #f0fdfa;
             margin-bottom: 15px;
@@ -323,19 +369,20 @@
 
         .copy-btn:hover {
             background: var(--teal-bright);
-            color: #042f2e;
+            color: #041f1e;
             font-weight: 700;
         }
 
-        /* --- GRID DISPLAY --- */
+        /* --- JOKE GRID --- */
         .joke-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 16px;
+            margin-top: 12px;
         }
 
         .grid-card {
-            background: var(--glass-bg);
+            background: var(--glass-card);
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             padding: 18px;
@@ -351,94 +398,106 @@
         }
 
         .grid-card .text {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             margin-bottom: 14px;
             color: #ccfbf1;
+            line-height: 1.4;
             white-space: pre-line;
         }
 
-        /* MOBILE SIDEBAR STAY ON LEFT */
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
-            .sidebar-left {
-                width: 200px;
-                padding: 16px 12px;
+            .content-area {
+                margin-left: 0;
+                padding: 16px;
             }
-            .main-stage {
-                padding: 16px 12px;
+            .sidebar {
+                width: 260px;
+                transform: translateX(-100%);
+            }
+            .sidebar.open-mobile {
+                transform: translateX(0);
             }
             .swipe-card {
-                flex: 0 0 260px;
-            }
-            .controls-row {
-                flex-wrap: wrap;
+                flex: 0 0 270px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-layout">
+    <div class="app-container">
 
-        <!-- ALWAYS ON THE LEFT SIDEBAR -->
-        <aside class="sidebar-left">
-            <div class="brand">⚡ TEAL VAULT</div>
+        <!-- COLLAPSIBLE SIDEBAR MENU -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">⚡ TEAL VAULT</div>
+                <button class="close-sidebar-btn" onclick="toggleSidebar()">✕</button>
+            </div>
 
             <div>
                 <div class="sidebar-title">Categories</div>
                 <nav class="category-nav">
                     <button class="cat-btn active" onclick="filterCategory('all', this)">All Jokes</button>
                     <button class="cat-btn" onclick="filterCategory('Dad Jokes', this)">Dad Jokes</button>
-                    <button class="cat-btn" onclick="filterCategory('Puns', this)">Puns</button>
-                    <button class="cat-btn" onclick="filterCategory('One-Liners', this)">One-Liners</button>
                     <button class="cat-btn" onclick="filterCategory('Tech', this)">Tech Humor</button>
-                    <button class="cat-btn" onclick="filterCategory('Science', this)">Science</button>
+                    <button class="cat-btn" onclick="filterCategory('Puns', this)">Puns</button>
+                    <button class="cat-btn" onclick="filterCategory('Dark Humor', this)">Dark Humor</button>
+                    <button class="cat-btn" onclick="filterCategory('One-Liners', this)">One-Liners</button>
                 </nav>
             </div>
 
             <div>
-                <div class="sidebar-title">Pick Specific Joke</div>
+                <div class="sidebar-title">Jump to Specific Joke</div>
                 <select id="jokePicker" class="picker-select" onchange="pickJoke(this.value)">
                     <option value="">Select joke #...</option>
                 </select>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="main-stage">
+        <!-- MAIN CONTENT STAGE -->
+        <main class="content-area" id="contentArea">
 
-            <!-- DEDICATED INTRO HERO -->
+            <!-- TOP ACTION BAR -->
+            <div class="top-bar">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                    <span>☰</span> Menu & Categories
+                </button>
+            </div>
+
+            <!-- HUMAN INTRO HERO -->
             <section class="intro-hero">
-                <span class="hero-badge">⚡ Official Joke Vault</span>
-                <h1>Welcome to The Joke Vault</h1>
-                <p>Enjoy over 350+ handpicked non-repeating single liners, dad jokes, tech humor, and puns. Select categories from the left menu or swipe through the carousel!</p>
+                <span class="hero-badge">Welcome to the Vault</span>
+                <h1>No fluff. Just laughs.</h1>
+                <p>Need a quick laugh between compile times or trying to ruin your family's dinner with atrocious dad jokes? You're in the right place. Pick a category from the left menu or swipe through the cards below.</p>
             </section>
 
-            <!-- SEARCH AND ACTION CONTROLS -->
-            <div class="controls-row">
+            <!-- SEARCH BAR & SURPRISE BUTTON -->
+            <div class="search-row">
                 <input type="text" id="searchInput" class="search-input" placeholder="Search keywords..." oninput="executeSearch()">
-                <button class="btn-search" onclick="executeSearch()">Search</button>
-                <button class="btn-random" onclick="scrollRandom()">🎲 Surprise Me</button>
+                <button class="btn-action" onclick="executeSearch()">Search</button>
+                <button class="btn-action" onclick="scrollRandom()">🎲 Random Joke</button>
             </div>
 
             <!-- SWIPE CAROUSEL -->
-            <section class="carousel-wrapper">
-                <div class="section-title-bar">
-                    <span>Swipeable Carousel</span>
+            <section style="margin-bottom: 35px;">
+                <div class="section-header">
+                    <span>Featured Swipe Carousel</span>
                     <span>👈 Drag or Swipe 👉</span>
                 </div>
                 <div class="carousel-track" id="carouselTrack">
-                    <!-- Dynamic swipe cards -->
+                    <!-- Cards render here -->
                 </div>
             </section>
 
-            <!-- JOKE GRID -->
+            <!-- ALL JOKES GRID -->
             <section>
-                <div class="section-title-bar">
-                    <span>Vault Grid Collection</span>
+                <div class="section-header">
+                    <span>Full Joke Vault</span>
                     <span id="statsCount">Showing 0 jokes</span>
                 </div>
                 <div class="joke-grid" id="jokeGrid">
-                    <!-- Dynamic grid cards -->
+                    <!-- Grid items render here -->
                 </div>
             </section>
 
@@ -447,47 +506,34 @@
     </div>
 
 <script>
-    // 15 Base Unique Themes expanded into 350+ unique jokes
-    const prefixes = [
-        "Classic:", "Here's one:", "Quick laugh:", "Vault special:", "Did you hear?",
-        "Top rated:", "Staff pick:", "Uncensored:", "Daily punchline:", "Brain freeze:",
-        "Fun fact:", "Midnight humor:", "Geek choice:", "Overheard:", "Classic gold:"
+    // Authentic, handpicked jokes across categories
+    const jokesDatabase = [
+        { id: 1, category: "Tech", text: "Why do programmers prefer dark mode?\nBecause light attracts bugs." },
+        { id: 2, category: "Tech", text: "There are 10 types of people in the world:\nThose who understand binary, and those who don't." },
+        { id: 3, category: "Tech", text: "A SQL query walks into a bar, walks up to two tables and asks:\n'Can I join you?'" },
+        { id: 4, category: "Tech", text: "Why was the JavaScript developer sad?\nBecause he didn't Node how to Express himself." },
+        { id: 5, category: "Tech", text: "An optimist sees the glass half full.\nA pessimist sees it half empty.\nA programmer sees the glass twice as large as necessary." },
+        { id: 6, category: "Dad Jokes", text: "I'm reading a book on anti-gravity.\nIt's impossible to put down!" },
+        { id: 7, category: "Dad Jokes", text: "Did you hear about the guy who invented Lifesavers?\nThey say he made a mint!" },
+        { id: 8, category: "Dad Jokes", text: "Why don't skeletons fight each other?\nThey don't have the guts." },
+        { id: 9, category: "Dad Jokes", text: "What do you call a fake noodle?\nAn impasta." },
+        { id: 10, category: "Dad Jokes", text: "Want to hear a joke about construction?\nI'm still working on it." },
+        { id: 11, category: "Puns", text: "Time flies like an arrow, but fruit flies like a banana." },
+        { id: 12, category: "Puns", text: "I was going to tell a time-travel joke, but you didn't like it." },
+        { id: 13, category: "Puns", text: "Geology rocks, but Geography is where it's at." },
+        { id: 14, category: "Puns", text: "I used to play piano by ear, but now I use my hands." },
+        { id: 15, category: "Dark Humor", text: "Give a man a match, and he'll be warm for a few hours.\nSet him on fire, and he'll be warm for the rest of his life." },
+        { id: 16, category: "Dark Humor", text: "My grandfather has the heart of a lion... and a lifetime ban from the zoo." },
+        { id: 17, category: "Dark Humor", text: "You don't need a parachute to go skydiving.\nYou need a parachute to go skydiving twice." },
+        { id: 18, category: "One-Liners", text: "My wife told me to stop impersonating a flamingo. I had to put my foot down." },
+        { id: 19, category: "One-Liners", text: "I'm on a seafood diet. Every time I see food, I eat it." },
+        { id: 20, category: "One-Liners", text: "I told my doctor that I broke my arm in two places. He told me to stop going to those places." }
     ];
-
-    const jokeSeeds = [
-        { text: "I'm reading a book on anti-gravity. It's impossible to put down!", cat: "Dad Jokes" },
-        { text: "Did you hear about the guy who invented Lifesavers? He made a mint!", cat: "Dad Jokes" },
-        { text: "Why don't skeletons fight each other? They don't have the guts.", cat: "Dad Jokes" },
-        { text: "What do you call a fake noodle? An impasta.", cat: "Dad Jokes" },
-        { text: "Time flies like an arrow, but fruit flies like a banana.", cat: "Puns" },
-        { text: "I was going to tell a time-travel joke, but you didn't like it.", cat: "Puns" },
-        { text: "Geology rocks, but Geography is where it's at.", cat: "Puns" },
-        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", cat: "One-Liners" },
-        { text: "I am on a seafood diet. Every time I see food, I eat it.", cat: "One-Liners" },
-        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", cat: "Tech" },
-        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", cat: "Tech" },
-        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", cat: "Tech" },
-        { text: "Never trust an atom. They make up everything!", cat: "Science" },
-        { text: "Why can't you trust photons? They're always making light of the situation.", cat: "Science" },
-        { text: "A neutron walks into a bar and asks, 'How much for a drink?' Bartender says, 'For you, no charge!'", cat: "Science" }
-    ];
-
-    // Generate 350+ unique non-looping jokes
-    let jokesDatabase = [];
-    let counter = 1;
-
-    prefixes.forEach((prefix) => {
-        jokeSeeds.forEach((seed) => {
-            jokesDatabase.push({
-                id: counter++,
-                text: `${prefix} ${seed.text}`,
-                category: seed.cat
-            });
-        });
-    });
 
     let currentCat = 'all';
 
+    const sidebar = document.getElementById('sidebar');
+    const contentArea = document.getElementById('contentArea');
     const carouselTrack = document.getElementById('carouselTrack');
     const jokeGrid = document.getElementById('jokeGrid');
     const jokePicker = document.getElementById('jokePicker');
@@ -500,19 +546,29 @@
         renderGrid(jokesDatabase);
     }
 
+    // Toggle Sidebar Open / Close
+    function toggleSidebar() {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('open-mobile');
+        } else {
+            sidebar.classList.toggle('collapsed');
+            contentArea.classList.toggle('expanded');
+        }
+    }
+
     function populatePicker(list) {
         jokePicker.innerHTML = '<option value="">Select joke #...</option>';
         list.forEach(j => {
             const opt = document.createElement('option');
             opt.value = j.id;
-            opt.textContent = `#${j.id} - ${j.text.substring(0, 30)}...`;
+            opt.textContent = `#${j.id} - ${j.text.substring(0, 30).replace('\n', ' ')}...`;
             jokePicker.appendChild(opt);
         });
     }
 
     function renderCarousel(list) {
         carouselTrack.innerHTML = '';
-        list.slice(0, 30).forEach(j => {
+        list.forEach(j => {
             const card = document.createElement('div');
             card.className = 'swipe-card';
             card.id = `card-${j.id}`;
@@ -555,9 +611,9 @@
     function executeSearch() {
         const query = searchInput.value.toLowerCase().trim();
         const filtered = jokesDatabase.filter(j => {
-            const matchesCategory = (currentCat === 'all' || j.category === currentCat);
-            const matchesQuery = j.text.toLowerCase().includes(query);
-            return matchesCategory && matchesQuery;
+            const matchesCat = (currentCat === 'all' || j.category === currentCat);
+            const matchesQ = j.text.toLowerCase().includes(query);
+            return matchesCat && matchesQ;
         });
 
         populatePicker(filtered);
@@ -570,463 +626,6 @@
         const targetCard = document.getElementById(`card-${id}`);
         if (targetCard) {
             targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-    }
-
-    function scrollRandom() {
-        const cards = carouselTrack.children;
-        if (cards.length > 0) {
-            const randomIndex = Math.floor(Math.random() * cards.length);
-            cards[randomIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-    }
-
-    function copyText(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const original = btn.innerText;
-            btn.innerText = 'Copied! ✓';
-            setTimeout(() => btn.innerText = original, 1500);
-        });
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function escapeJs(str) {
-        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-    }
-
-    window.onload = initApp;
-</script>
-</body>
-</html>
-        }
-
-        .joke-picker-select {
-            width: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--glass-border);
-            color: var(--teal-bright);
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .joke-picker-select option {
-            background: #042f2e;
-            color: #fff;
-        }
-
-        /* --- MAIN CONTENT AREA --- */
-        .main-content {
-            flex: 1;
-            padding: 30px 40px;
-            overflow-x: hidden;
-            max-width: 1200px;
-        }
-
-        /* --- INTRO SECTION --- */
-        .intro-hero {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius);
-            padding: 35px;
-            margin-bottom: 30px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(45, 212, 191, 0.15);
-            border: 1px solid var(--teal-bright);
-            color: var(--teal-bright);
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-        }
-
-        .intro-hero h1 {
-            font-size: 2.2rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            color: #ffffff;
-            letter-spacing: -0.02em;
-        }
-
-        .intro-hero p {
-            color: var(--text-muted);
-            font-size: 1rem;
-            line-height: 1.6;
-            max-width: 650px;
-        }
-
-        /* --- CONTROLS BAR --- */
-        .controls-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .search-input {
-            flex: 1;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 12px 18px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--teal-bright);
-            box-shadow: 0 0 15px var(--teal-glow);
-        }
-
-        .btn-random {
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-random:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px var(--teal-glow);
-        }
-
-        /* --- CAROUSEL (SWIPEABLE) --- */
-        .carousel-container {
-            margin-bottom: 40px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 15px;
-            cursor: grab;
-            scrollbar-width: none;
-        }
-
-        .carousel-track::-webkit-scrollbar { display: none; }
-
-        .swipe-card {
-            flex: 0 0 350px;
-            scroll-snap-align: start;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 200px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            transition: border-color 0.2s;
-        }
-
-        .swipe-card:hover {
-            border-color: var(--teal-bright);
-        }
-
-        .swipe-card .tag {
-            align-self: flex-start;
-            background: rgba(45, 212, 191, 0.15);
-            color: var(--teal-bright);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .swipe-card .body {
-            font-size: 1.05rem;
-            line-height: 1.5;
-            color: #f0fdfa;
-            margin-bottom: 15px;
-            white-space: pre-line;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .joke-id {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .copy-btn {
-            background: rgba(45, 212, 191, 0.1);
-            border: 1px solid var(--glass-border);
-            color: var(--teal-bright);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover {
-            background: var(--teal-bright);
-            color: #042f2e;
-            font-weight: 700;
-        }
-
-        /* --- JOKE GRID --- */
-        .joke-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-        }
-
-        .grid-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-
-        .grid-card:hover {
-            border-color: var(--teal-bright);
-            background: var(--glass-hover);
-        }
-
-        .grid-card .text {
-            font-size: 0.92rem;
-            margin-bottom: 14px;
-            color: #ccfbf1;
-            white-space: pre-line;
-        }
-
-        /* --- RESPONSIVE MOBILE --- */
-        @media (max-width: 768px) {
-            .app-wrapper { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { padding: 20px 15px; }
-            .swipe-card { flex: 0 0 85vw; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="app-wrapper">
-
-        <!-- LEFT SIDEBAR MENU -->
-        <aside class="sidebar">
-            <div class="brand">⚡ JOKE VAULT</div>
-
-            <div>
-                <div class="sidebar-section-title">Categories</div>
-                <nav class="nav-categories">
-                    <button class="cat-btn active" onclick="filterCat('all', this)">All Categories</button>
-                    <button class="cat-btn" onclick="filterCat('Dad Jokes', this)">Dad Jokes</button>
-                    <button class="cat-btn" onclick="filterCat('Puns', this)">Puns</button>
-                    <button class="cat-btn" onclick="filterCat('One-Liners', this)">One-Liners</button>
-                    <button class="cat-btn" onclick="filterCat('Tech', this)">Tech & Code</button>
-                    <button class="cat-btn" onclick="filterCat('Science', this)">Science & Math</button>
-                </nav>
-            </div>
-
-            <div>
-                <div class="sidebar-section-title">Pick Specific Joke</div>
-                <select id="jokePicker" class="joke-picker-select" onchange="pickJoke(this.value)">
-                    <option value="">Choose from list...</option>
-                </select>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT AREA -->
-        <main class="main-content">
-
-            <!-- INTRO HERO SECTION -->
-            <section class="intro-hero">
-                <span class="hero-badge">Welcome to the Vault</span>
-                <h1>Laughs, One Line at a Time</h1>
-                <p>Welcome! Browse over 350+ quick jokes, puns, tech humor, and dad jokes. Use the sidebar on the left to filter categories or jump straight to any joke.</p>
-            </section>
-
-            <!-- CONTROLS -->
-            <div class="controls-bar">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search jokes..." oninput="handleSearch()">
-                <button class="btn-random" onclick="scrollRandom()">🎲 Surprise Me</button>
-            </div>
-
-            <!-- SWIPE CAROUSEL -->
-            <section class="carousel-container">
-                <div class="section-header">
-                    <span>Featured Swipe Carousel</span>
-                    <span>👈 Swipe 👉</span>
-                </div>
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Dynamic swipe cards -->
-                </div>
-            </section>
-
-            <!-- JOKE GRID -->
-            <section>
-                <div class="section-header">
-                    <span>Full Vault Grid</span>
-                    <span id="statsText">Showing 0 jokes</span>
-                </div>
-                <div class="joke-grid" id="jokeGrid">
-                    <!-- Dynamic grid cards -->
-                </div>
-            </section>
-
-        </main>
-
-    </div>
-
-<script>
-    const baseJokes = [
-        { text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
-        { text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
-        { text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
-        { text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
-        { text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
-        { text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
-        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
-        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
-        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
-        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
-        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
-        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
-        { text: "Never trust an atom. They make up everything!", category: "Science" },
-        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
-        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
-    ];
-
-    // Scale to 350+ jokes
-    let allJokes = [];
-    for(let i = 0; i < 25; i++) {
-        baseJokes.forEach(j => {
-            allJokes.push({
-                id: allJokes.length + 1,
-                text: j.text,
-                category: j.category
-            });
-        });
-    }
-
-    let activeCat = 'all';
-
-    const carouselTrack = document.getElementById('carouselTrack');
-    const jokeGrid = document.getElementById('jokeGrid');
-    const jokePicker = document.getElementById('jokePicker');
-    const searchInput = document.getElementById('searchInput');
-    const statsText = document.getElementById('statsText');
-
-    function init() {
-        populatePicker(allJokes);
-        renderCarousel(allJokes);
-        renderGrid(allJokes);
-    }
-
-    function populatePicker(list) {
-        jokePicker.innerHTML = '<option value="">Choose from list...</option>';
-        list.forEach(j => {
-            const opt = document.createElement('option');
-            opt.value = j.id;
-            opt.textContent = `#${j.id} - ${j.text.substring(0, 35)}...`;
-            jokePicker.appendChild(opt);
-        });
-    }
-
-    function renderCarousel(list) {
-        carouselTrack.innerHTML = '';
-        list.slice(0, 30).forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'swipe-card';
-            card.id = `card-${j.id}`;
-            card.innerHTML = `
-                <span class="tag">${j.category}</span>
-                <div class="body">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="joke-id">#${j.id}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy 📋</button>
-                </div>
-            `;
-            carouselTrack.appendChild(card);
-        });
-    }
-
-    function renderGrid(list) {
-        jokeGrid.innerHTML = '';
-        statsText.innerText = `Showing ${list.length} jokes`;
-        list.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'grid-card';
-            card.innerHTML = `
-                <div class="text">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="joke-id">#${j.id} • ${j.category}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
-                </div>
-            `;
-            jokeGrid.appendChild(card);
-        });
-    }
-
-    function filterCat(cat, btn) {
-        activeCat = cat;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        handleSearch();
-    }
-
-    function handleSearch() {
-        const q = searchInput.value.toLowerCase();
-        const filtered = allJokes.filter(j => {
-            const matchesCat = (activeCat === 'all' || j.category === activeCat);
-            const matchesQ = j.text.toLowerCase().includes(q);
-            return matchesCat && matchesQ;
-        });
-        populatePicker(filtered);
-        renderCarousel(filtered);
-        renderGrid(filtered);
-    }
-
-    function pickJoke(id) {
-        if (!id) return;
-        const target = document.getElementById(`card-${id}`);
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
     }
 
@@ -1047,902 +646,15 @@
     }
 
     function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace/>/g, "&gt;");
     }
 
     function escapeJs(str) {
         return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
     }
 
-    window.onload = init;
+    window.onload = initApp;
 </script>
 </body>
 </html>
-            background: rgba(236, 72, 153, 0.15);
-            border: 1px solid rgba(236, 72, 153, 0.3);
-            color: var(--accent-pink);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            letter-spacing: 0.05em;
-        }
 
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 3.2rem);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 12px;
-            background: linear-gradient(to right, #ffffff, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            max-width: 550px;
-            margin: 0 auto;
-        }
-
-        /* --- CONTROLS --- */
-        .controls-bar {
-            display: flex;
-            gap: 12px;
-            margin: 30px 0 20px 0;
-            flex-wrap: wrap;
-        }
-
-        .search-input, .joke-dropdown {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-bright);
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            outline: none;
-            backdrop-filter: blur(10px);
-            transition: all 0.2s;
-        }
-
-        .search-input { flex: 1 1 200px; }
-        .joke-dropdown { flex: 2 1 300px; cursor: pointer; }
-
-        .search-input:focus, .joke-dropdown:focus {
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 15px rgba(129, 140, 248, 0.25);
-        }
-
-        .joke-dropdown option {
-            background: #1e1b4b;
-            color: #fff;
-        }
-
-        .btn-action {
-            background: linear-gradient(135deg, #a855f7, #6366f1);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
-            white-space: nowrap;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
-        }
-
-        /* --- SWIPEABLE CAROUSEL --- */
-        .carousel-section {
-            margin: 20px 0 40px 0;
-            position: relative;
-        }
-
-        .carousel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .carousel-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            font-weight: 700;
-        }
-
-        .swipe-hint {
-            font-size: 0.8rem;
-            color: var(--accent-pink);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .carousel-track {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding: 10px 5px 25px 5px;
-            cursor: grab;
-            scrollbar-width: none; /* Firefox */
-        }
-
-        .carousel-track::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
-
-        .carousel-track:active {
-            cursor: grabbing;
-        }
-
-        .swipe-card {
-            flex: 0 0 clamp(280px, 80vw, 420px);
-            scroll-snap-align: center;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: var(--radius);
-            padding: 28px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 220px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .swipe-card:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-4px);
-        }
-
-        .swipe-card .tag {
-            align-self: flex-start;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--accent-glow);
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .swipe-card .joke-body {
-            font-size: 1.1rem;
-            line-height: 1.5;
-            color: #f1f5f9;
-            margin-bottom: 20px;
-            white-space: pre-line;
-            user-select: text;
-        }
-
-        .swipe-card .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .joke-id {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .copy-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--glass-border);
-            color: var(--text-bright);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover {
-            background: #ffffff;
-            color: #000;
-        }
-
-        /* --- GRID DISPLAY --- */
-        .grid-header {
-            margin-top: 40px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .joke-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .mini-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-            border-radius: 14px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-
-        .mini-card:hover {
-            background: var(--glass-hover);
-            border-color: var(--accent-glow);
-        }
-
-        .mini-card .body {
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-            color: #e2e8f0;
-            white-space: pre-line;
-            user-select: text;
-        }
-
-        .mini-card .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        @media (max-width: 600px) {
-            .navbar { position: relative; }
-            .nav-container { height: auto; padding: 12px 16px; flex-direction: column; gap: 10px; }
-            .hero { padding: 15px 0; }
-            .controls-bar { flex-direction: column; }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">✨ JOKEVAULT</div>
-            <div class="nav-categories">
-                <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
-                <button class="cat-btn" onclick="filterCategory('Dad Jokes', this)">Dad Jokes</button>
-                <button class="cat-btn" onclick="filterCategory('Puns', this)">Puns</button>
-                <button class="cat-btn" onclick="filterCategory('One-Liners', this)">One-Liners</button>
-                <button class="cat-btn" onclick="filterCategory('Tech', this)">Tech</button>
-                <button class="cat-btn" onclick="filterCategory('Science', this)">Science</button>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        
-        <!-- INTRO HERO SECTION -->
-        <section class="hero">
-            <span class="hero-badge">🔥 Instant Laughs</span>
-            <h1>Swipe, Pick & Share</h1>
-            <p>Your minimalist dark-mode vault for hilarious single-liners, tech humor, puns, and iconic dad jokes.</p>
-        </section>
-
-        <!-- CONTROLS BAR -->
-        <div class="controls-bar">
-            <!-- Joke Picker Dropdown -->
-            <select id="jokePicker" class="joke-dropdown" onchange="selectSpecificJoke(this.value)">
-                <option value="">🎯 Pick a joke directly...</option>
-            </select>
-            <!-- Search Input -->
-            <input type="text" id="searchInput" class="search-input" placeholder="Search keyword..." oninput="handleFilter()">
-            <!-- Random Button -->
-            <button class="btn-action" onclick="scrollRandomJoke()">🎲 Surprise Me</button>
-        </div>
-
-        <!-- SWIPEABLE CAROUSEL -->
-        <section class="carousel-section">
-            <div class="carousel-header">
-                <span class="carousel-title">FEATURED SWIPE CAROUSEL</span>
-                <span class="swipe-hint">👈 Swipe Cards 👉</span>
-            </div>
-            <div class="carousel-track" id="carouselTrack">
-                <!-- Swipeable cards dynamically injected here -->
-            </div>
-        </section>
-
-        <!-- JOKE GRID SECTION -->
-        <div class="grid-header">
-            <span>ALL VAULT JOKES</span>
-            <span id="jokeStats">Showing 0 jokes</span>
-        </div>
-        <div class="joke-grid" id="jokeGrid">
-            <!-- Grid cards injected here -->
-        </div>
-
-    </div>
-
-<script>
-    // Database with 350+ jokes auto-generated from base collection
-    const baseJokes = [
-        { text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
-        { text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
-        { text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
-        { text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
-        { text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
-        { text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
-        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
-        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
-        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
-        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
-        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
-        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
-        { text: "Never trust an atom. They make up everything!", category: "Science" },
-        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
-        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
-    ];
-
-    // Populate array to 350+ items
-    let jokesVault = [];
-    for(let i = 0; i < 25; i++) {
-        baseJokes.forEach((j) => {
-            jokesVault.push({
-                id: jokesVault.length + 1,
-                text: j.text,
-                category: j.category
-            });
-        });
-    }
-
-    let activeCategory = 'all';
-
-    // DOM Elements
-    const carouselTrack = document.getElementById('carouselTrack');
-    const jokeGrid = document.getElementById('jokeGrid');
-    const jokePicker = document.getElementById('jokePicker');
-    const searchInput = document.getElementById('searchInput');
-    const jokeStats = document.getElementById('jokeStats');
-
-    function init() {
-        populatePickerOptions(jokesVault);
-        renderCarousel(jokesVault);
-        renderGrid(jokesVault);
-        enableDragScroll();
-    }
-
-    // Populate Pick Dropdown Options
-    function populatePickerOptions(list) {
-        jokePicker.innerHTML = '<option value="">🎯 Pick a joke directly...</option>';
-        list.forEach(j => {
-            const opt = document.createElement('option');
-            opt.value = j.id;
-            opt.textContent = `#${j.id} - ${j.text.substring(0, 45)}...`;
-            jokePicker.appendChild(opt);
-        });
-    }
-
-    // Render Carousel
-    function renderCarousel(list) {
-        carouselTrack.innerHTML = '';
-        if(list.length === 0) return;
-
-        // Render first 30 jokes for carousel to keep smooth performance
-        const carouselList = list.slice(0, 30);
-        carouselList.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'swipe-card';
-            card.id = `card-${j.id}`;
-            card.innerHTML = `
-                <span class="tag">${j.category}</span>
-                <div class="joke-body">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="joke-id">#${j.id}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy 📋</button>
-                </div>
-            `;
-            carouselTrack.appendChild(card);
-        });
-    }
-
-    // Render Grid
-    function renderGrid(list) {
-        jokeGrid.innerHTML = '';
-        jokeStats.innerText = `Showing ${list.length} jokes`;
-
-        list.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'mini-card';
-            card.innerHTML = `
-                <div class="body">${escapeHtml(j.text)}</div>
-                <div class="footer">
-                    <span class="joke-id">#${j.id} • ${j.category}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
-                </div>
-            `;
-            jokeGrid.appendChild(card);
-        });
-    }
-
-    // Category Filter Function
-    function filterCategory(cat, btn) {
-        activeCategory = cat;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        handleFilter();
-    }
-
-    // Filter Logic
-    function handleFilter() {
-        const query = searchInput.value.toLowerCase();
-        const filtered = jokesVault.filter(j => {
-            const matchesCat = (activeCategory === 'all' || j.category === activeCategory);
-            const matchesQuery = j.text.toLowerCase().includes(query);
-            return matchesCat && matchesQuery;
-        });
-
-        populatePickerOptions(filtered);
-        renderCarousel(filtered);
-        renderGrid(filtered);
-    }
-
-    // Pick Specific Joke
-    function selectSpecificJoke(id) {
-        if (!id) return;
-        const targetCard = document.getElementById(`card-${id}`);
-        if (targetCard) {
-            targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-    }
-
-    // Random Joke Scroll
-    function scrollRandomJoke() {
-        const cards = carouselTrack.children;
-        if (cards.length > 0) {
-            const randomIndex = Math.floor(Math.random() * cards.length);
-            cards[randomIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-    }
-
-    // Drag-to-swipe desktop support
-    function enableDragScroll() {
-        let isDown = false;
-        let startX, scrollLeft;
-
-        carouselTrack.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - carouselTrack.offsetLeft;
-            scrollLeft = carouselTrack.scrollLeft;
-        });
-        carouselTrack.addEventListener('mouseleave', () => isDown = false);
-        carouselTrack.addEventListener('mouseup', () => isDown = false);
-        carouselTrack.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - carouselTrack.offsetLeft;
-            const walk = (x - startX) * 2;
-            carouselTrack.scrollLeft = scrollLeft - walk;
-        });
-    }
-
-    // Clipboard Copy Helper
-    function copyText(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const original = btn.innerText;
-            btn.innerText = 'Copied! ✓';
-            setTimeout(() => btn.innerText = original, 1500);
-        });
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function escapeJs(str) {
-        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-    }
-
-    window.onload = init;
-</script>
-</body>
-</html>
-            padding: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .picker-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .picker-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 0.95rem;
-            background-color: var(--surface);
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        select:focus, input:focus {
-            border-color: var(--primary);
-        }
-
-        .filter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: var(--radius);
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* --- FEATURED SINGLE JOKE DISPLAY --- */
-        .single-display {
-            display: none;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            border-radius: var(--radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .single-display.active {
-            display: block;
-        }
-
-        .single-display .badge {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted);
-        }
-
-        .single-display .joke-text {
-            font-size: 1.3rem;
-            font-weight: 500;
-            margin: 20px 0;
-            white-space: pre-line;
-        }
-
-        /* --- JOKE GRID --- */
-        .stats {
-            font-size: 0.85rem;
-            color: var(--muted);
-            margin-bottom: 16px;
-        }
-
-        .joke-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .joke-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: border-color 0.2s;
-        }
-
-        .joke-card:hover {
-            border-color: #a3a3a3;
-        }
-
-        .card-text {
-            font-size: 0.95rem;
-            margin-bottom: 16px;
-            white-space: pre-line;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 12px;
-            border-top: 1px solid var(--accent-bg);
-        }
-
-        .card-tag {
-            font-size: 0.75rem;
-            color: var(--muted);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .copy-btn {
-            background: none;
-            border: 1px solid var(--border);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            color: var(--muted);
-            cursor: pointer;
-        }
-
-        .copy-btn:hover {
-            background: var(--accent-bg);
-            color: var(--text);
-        }
-
-        @media (max-width: 640px) {
-            .filter-row { grid-template-columns: 1fr; }
-            .nav-links { display: none; } /* Hide text menu on mobile for simplicity */
-        }
-    </style>
-</head>
-<body>
-
-    <!-- TOP NAVIGATION -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">⚡ The Joke Vault</a>
-            <ul class="nav-links">
-                <li><button class="nav-link active" onclick="setCategory('all')">All</button></li>
-                <li><button class="nav-link" onclick="setCategory('Dad Jokes')">Dad Jokes</button></li>
-                <li><button class="nav-link" onclick="setCategory('Puns')">Puns</button></li>
-                <li><button class="nav-link" onclick="setCategory('One-Liners')">One-Liners</button></li>
-                <li><button class="nav-link" onclick="setCategory('Tech')">Tech</button></li>
-                <li><button class="nav-link" onclick="setCategory('Science')">Science</button></li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container">
-        
-        <!-- INTRO SECTION -->
-        <header class="intro">
-            <h1>Handpicked Jokes</h1>
-            <p>A minimalist collection designed for quick laughs and clean reading. Search, filter by category, or pick a specific joke below.</p>
-        </header>
-
-        <!-- CONTROLS & JOKE SELECTOR -->
-        <div class="controls-card">
-            
-            <!-- Specific Joke Selector -->
-            <div class="picker-group">
-                <label for="jokeSelect">Choose a Specific Joke:</label>
-                <select id="jokeSelect" onchange="pickSpecificJoke(this.value)">
-                    <option value="">-- Select a Joke from the List --</option>
-                </select>
-            </div>
-
-            <!-- Search, Category & Random -->
-            <div class="filter-row">
-                <input type="text" id="searchInput" placeholder="Search jokes..." oninput="applyFilters()">
-                <select id="categorySelect" onchange="applyFilters()">
-                    <option value="all">All Categories</option>
-                    <option value="Dad Jokes">Dad Jokes</option>
-                    <option value="Puns">Puns</option>
-                    <option value="One-Liners">One-Liners</option>
-                    <option value="Tech">Tech & Code</option>
-                    <option value="Science">Science & Math</option>
-                </select>
-                <button class="btn" onclick="showRandomJoke()">🎲 Surprise Me</button>
-            </div>
-        </div>
-
-        <!-- SINGLE JOKE DISPLAY (Appears when picked or random clicked) -->
-        <div class="single-display" id="singleDisplay">
-            <span class="badge" id="singleCategory">Category</span>
-            <div class="joke-text" id="singleText">Joke text goes here...</div>
-            <button class="copy-btn" id="singleCopyBtn" onclick="copySingleJoke()">Copy to Clipboard 📋</button>
-        </div>
-
-        <!-- JOKE LIST DISPLAY -->
-        <div class="stats" id="statsText">Showing 0 jokes</div>
-        <div class="joke-grid" id="jokeGrid"></div>
-
-    </div>
-
-<script>
-    // Sample collection (easily expandable)
-    const jokes = [
-        { id: 1, text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
-        { id: 2, text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
-        { id: 3, text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
-        { id: 4, text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
-        { id: 5, text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
-        { id: 6, text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
-        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
-        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
-        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
-        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
-        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
-        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
-        { text: "Never trust an atom. They make up everything!", category: "Science" },
-        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
-        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
-    ];
-
-    // Build array dynamically to hit 350+ items if needed
-    let allJokes = [];
-    for(let i = 0; i < 25; i++) {
-        jokes.forEach((j, idx) => {
-            allJokes.push({
-                id: allJokes.length + 1,
-                text: j.text,
-                category: j.category
-            });
-        });
-    }
-
-    let activeJoke = null;
-
-    // DOM Elements
-    const jokeSelect = document.getElementById('jokeSelect');
-    const categorySelect = document.getElementById('categorySelect');
-    const searchInput = document.getElementById('searchInput');
-    const jokeGrid = document.getElementById('jokeGrid');
-    const statsText = document.getElementById('statsText');
-    const singleDisplay = document.getElementById('singleDisplay');
-    const singleText = document.getElementById('singleText');
-    const singleCategory = document.getElementById('singleCategory');
-    const singleCopyBtn = document.getElementById('singleCopyBtn');
-
-    function init() {
-        populateDropdown();
-        applyFilters();
-    }
-
-    // Populate the "Choose a Specific Joke" Dropdown
-    function populateDropdown() {
-        jokeSelect.innerHTML = '<option value="">-- Select a Joke from the List --</option>';
-        allJokes.forEach(j => {
-            const opt = document.createElement('option');
-            opt.value = j.id;
-            // Display first 60 chars in dropdown menu
-            opt.textContent = `#${j.id} - ${j.text.substring(0, 55)}...`;
-            jokeSelect.appendChild(opt);
-        });
-    }
-
-    // Pick a specific joke from dropdown
-    function pickSpecificJoke(id) {
-        if (!id) {
-            singleDisplay.classList.remove('active');
-            return;
-        }
-        const found = allJokes.find(j => j.id == id);
-        if (found) {
-            showSingleJoke(found);
-        }
-    }
-
-    // Pick a random joke
-    function showRandomJoke() {
-        const randomIndex = Math.floor(Math.random() * allJokes.length);
-        const randomJoke = allJokes[randomIndex];
-        jokeSelect.value = randomJoke.id;
-        showSingleJoke(randomJoke);
-    }
-
-    // Render single featured joke view
-    function showSingleJoke(joke) {
-        activeJoke = joke;
-        singleText.innerText = joke.text;
-        singleCategory.innerText = joke.category;
-        singleCopyBtn.innerText = 'Copy to Clipboard 📋';
-        singleDisplay.classList.add('active');
-        singleDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    // Nav bar category handler
-    function setCategory(cat) {
-        categorySelect.value = cat;
-        // Update nav active states
-        document.querySelectorAll('.nav-link').forEach(btn => {
-            btn.classList.toggle('active', btn.innerText.toLowerCase() === cat.toLowerCase() || (cat === 'all' && btn.innerText === 'All'));
-        });
-        applyFilters();
-    }
-
-    // Apply Filter & Search
-    function applyFilters() {
-        const cat = categorySelect.value;
-        const q = searchInput.value.toLowerCase();
-
-        const filtered = allJokes.filter(j => {
-            const matchesCat = (cat === 'all' || j.category === cat);
-            const matchesSearch = j.text.toLowerCase().includes(q);
-            return matchesCat && matchesSearch;
-        });
-
-        renderGrid(filtered);
-    }
-
-    // Render Grid
-    function renderGrid(list) {
-        jokeGrid.innerHTML = '';
-        statsText.innerText = `Showing ${list.length} jokes`;
-
-        list.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'joke-card';
-            card.innerHTML = `
-                <div class="card-text">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="card-tag">${j.category}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
-                </div>
-            `;
-            jokeGrid.appendChild(card);
-        });
-    }
-
-    function copyText(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            btn.innerText = 'Copied!';
-            setTimeout(() => btn.innerText = 'Copy', 1500);
-        });
-    }
-
-    function copySingleJoke() {
-        if (activeJoke) {
-            navigator.clipboard.writeText(activeJoke.text).then(() => {
-                singleCopyBtn.innerText = 'Copied! ✓';
-                setTimeout(() => singleCopyBtn.innerText = 'Copy to Clipboard 📋', 1500);
-            });
-        }
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function escapeJs(str) {
-        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-    }
-
-    window.onload = init;
-</script>
-</body>
-</html>
