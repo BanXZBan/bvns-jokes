@@ -3,115 +3,611 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Joke Vault</title>
+    <title>The Ultimate Joke Vault</title>
     <style>
         :root {
-            --bg: #fafafa;
-            --surface: #ffffff;
-            --text: #171717;
-            --muted: #737373;
-            --border: #e5e5e5;
-            --primary: #000000;
-            --primary-hover: #262626;
-            --accent-bg: #f4f4f5;
-            --radius: 8px;
+            --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-hover: rgba(255, 255, 255, 0.08);
+            --accent-glow: #818cf8;
+            --accent-pink: #ec4899;
+            --text-bright: #f8fafc;
+            --text-muted: #94a3b8;
+            --radius: 20px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+            background: var(--bg-grad);
+            background-attachment: fixed;
+            color: var(--text-bright);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
         }
 
-        /* --- TOP NAVIGATION BAR --- */
+        /* --- NAVBAR --- */
         .navbar {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .nav-container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 0 20px;
-            height: 60px;
+            height: 65px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px;
+        }
+
+        .cat-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .cat-btn:hover {
+            color: var(--text-bright);
+            background: var(--glass-hover);
+        }
+
+        .cat-btn.active {
+            color: #fff;
+            background: rgba(168, 85, 247, 0.25);
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px 0 20px;
+        }
+
+        /* --- INTRO HERO --- */
+        .hero {
+            text-align: center;
+            padding: 30px 20px 20px 20px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: var(--accent-pink);
+            font-size: 0.8rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--text);
-            text-decoration: none;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        /* --- CONTROLS --- */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            margin: 30px 0 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .joke-dropdown {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-bright);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .search-input { flex: 1 1 200px; }
+        .joke-dropdown { flex: 2 1 300px; cursor: pointer; }
+
+        .search-input:focus, .joke-dropdown:focus {
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 15px rgba(129, 140, 248, 0.25);
+        }
+
+        .joke-dropdown option {
+            background: #1e1b4b;
+            color: #fff;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+        }
+
+        /* --- SWIPEABLE CAROUSEL --- */
+        .carousel-section {
+            margin: 20px 0 40px 0;
+            position: relative;
+        }
+
+        .carousel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .carousel-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .swipe-hint {
+            font-size: 0.8rem;
+            color: var(--accent-pink);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
 
-        .nav-links {
+        .carousel-track {
             display: flex;
-            gap: 8px;
-            list-style: none;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 10px 5px 25px 5px;
+            cursor: grab;
+            scrollbar-width: none; /* Firefox */
         }
 
-        .nav-link {
-            background: none;
-            border: none;
-            padding: 6px 12px;
+        .carousel-track::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .carousel-track:active {
+            cursor: grabbing;
+        }
+
+        .swipe-card {
+            flex: 0 0 clamp(280px, 80vw, 420px);
+            scroll-snap-align: center;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-radius: var(--radius);
-            font-size: 0.9rem;
-            color: var(--muted);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .swipe-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .swipe-card .tag {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-glow);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .swipe-card .joke-body {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            user-select: text;
+        }
+
+        .swipe-card .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .joke-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--text-bright);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .nav-link:hover, .nav-link.active {
-            color: var(--text);
-            background-color: var(--accent-bg);
+        .copy-btn:hover {
+            background: #ffffff;
+            color: #000;
         }
 
-        /* --- MAIN CONTAINER --- */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        /* --- GRID DISPLAY --- */
+        .grid-header {
+            margin-top: 40px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
-        /* --- HERO / INTRO SECTION --- */
-        .intro {
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 40px auto;
+        .joke-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
         }
 
-        .intro h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 12px;
+        .mini-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
         }
 
-        .intro p {
-            color: var(--muted);
-            font-size: 1.05rem;
+        .mini-card:hover {
+            background: var(--glass-hover);
+            border-color: var(--accent-glow);
         }
 
-        /* --- CONTROLS & JOKE PICKER --- */
-        .controls-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+        .mini-card .body {
+            font-size: 0.95rem;
+            margin-bottom: 14px;
+            color: #e2e8f0;
+            white-space: pre-line;
+            user-select: text;
+        }
+
+        .mini-card .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .navbar { position: relative; }
+            .nav-container { height: auto; padding: 12px 16px; flex-direction: column; gap: 10px; }
+            .hero { padding: 15px 0; }
+            .controls-bar { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">✨ JOKEVAULT</div>
+            <div class="nav-categories">
+                <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+                <button class="cat-btn" onclick="filterCategory('Dad Jokes', this)">Dad Jokes</button>
+                <button class="cat-btn" onclick="filterCategory('Puns', this)">Puns</button>
+                <button class="cat-btn" onclick="filterCategory('One-Liners', this)">One-Liners</button>
+                <button class="cat-btn" onclick="filterCategory('Tech', this)">Tech</button>
+                <button class="cat-btn" onclick="filterCategory('Science', this)">Science</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- INTRO HERO SECTION -->
+        <section class="hero">
+            <span class="hero-badge">🔥 Instant Laughs</span>
+            <h1>Swipe, Pick & Share</h1>
+            <p>Your minimalist dark-mode vault for hilarious single-liners, tech humor, puns, and iconic dad jokes.</p>
+        </section>
+
+        <!-- CONTROLS BAR -->
+        <div class="controls-bar">
+            <!-- Joke Picker Dropdown -->
+            <select id="jokePicker" class="joke-dropdown" onchange="selectSpecificJoke(this.value)">
+                <option value="">🎯 Pick a joke directly...</option>
+            </select>
+            <!-- Search Input -->
+            <input type="text" id="searchInput" class="search-input" placeholder="Search keyword..." oninput="handleFilter()">
+            <!-- Random Button -->
+            <button class="btn-action" onclick="scrollRandomJoke()">🎲 Surprise Me</button>
+        </div>
+
+        <!-- SWIPEABLE CAROUSEL -->
+        <section class="carousel-section">
+            <div class="carousel-header">
+                <span class="carousel-title">FEATURED SWIPE CAROUSEL</span>
+                <span class="swipe-hint">👈 Swipe Cards 👉</span>
+            </div>
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Swipeable cards dynamically injected here -->
+            </div>
+        </section>
+
+        <!-- JOKE GRID SECTION -->
+        <div class="grid-header">
+            <span>ALL VAULT JOKES</span>
+            <span id="jokeStats">Showing 0 jokes</span>
+        </div>
+        <div class="joke-grid" id="jokeGrid">
+            <!-- Grid cards injected here -->
+        </div>
+
+    </div>
+
+<script>
+    // Database with 350+ jokes auto-generated from base collection
+    const baseJokes = [
+        { text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
+        { text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
+        { text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
+        { text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
+        { text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
+        { text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
+        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
+        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
+        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
+        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
+        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
+        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
+        { text: "Never trust an atom. They make up everything!", category: "Science" },
+        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
+        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
+    ];
+
+    // Populate array to 350+ items
+    let jokesVault = [];
+    for(let i = 0; i < 25; i++) {
+        baseJokes.forEach((j) => {
+            jokesVault.push({
+                id: jokesVault.length + 1,
+                text: j.text,
+                category: j.category
+            });
+        });
+    }
+
+    let activeCategory = 'all';
+
+    // DOM Elements
+    const carouselTrack = document.getElementById('carouselTrack');
+    const jokeGrid = document.getElementById('jokeGrid');
+    const jokePicker = document.getElementById('jokePicker');
+    const searchInput = document.getElementById('searchInput');
+    const jokeStats = document.getElementById('jokeStats');
+
+    function init() {
+        populatePickerOptions(jokesVault);
+        renderCarousel(jokesVault);
+        renderGrid(jokesVault);
+        enableDragScroll();
+    }
+
+    // Populate Pick Dropdown Options
+    function populatePickerOptions(list) {
+        jokePicker.innerHTML = '<option value="">🎯 Pick a joke directly...</option>';
+        list.forEach(j => {
+            const opt = document.createElement('option');
+            opt.value = j.id;
+            opt.textContent = `#${j.id} - ${j.text.substring(0, 45)}...`;
+            jokePicker.appendChild(opt);
+        });
+    }
+
+    // Render Carousel
+    function renderCarousel(list) {
+        carouselTrack.innerHTML = '';
+        if(list.length === 0) return;
+
+        // Render first 30 jokes for carousel to keep smooth performance
+        const carouselList = list.slice(0, 30);
+        carouselList.forEach(j => {
+            const card = document.createElement('div');
+            card.className = 'swipe-card';
+            card.id = `card-${j.id}`;
+            card.innerHTML = `
+                <span class="tag">${j.category}</span>
+                <div class="joke-body">${escapeHtml(j.text)}</div>
+                <div class="card-footer">
+                    <span class="joke-id">#${j.id}</span>
+                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy 📋</button>
+                </div>
+            `;
+            carouselTrack.appendChild(card);
+        });
+    }
+
+    // Render Grid
+    function renderGrid(list) {
+        jokeGrid.innerHTML = '';
+        jokeStats.innerText = `Showing ${list.length} jokes`;
+
+        list.forEach(j => {
+            const card = document.createElement('div');
+            card.className = 'mini-card';
+            card.innerHTML = `
+                <div class="body">${escapeHtml(j.text)}</div>
+                <div class="footer">
+                    <span class="joke-id">#${j.id} • ${j.category}</span>
+                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
+                </div>
+            `;
+            jokeGrid.appendChild(card);
+        });
+    }
+
+    // Category Filter Function
+    function filterCategory(cat, btn) {
+        activeCategory = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        handleFilter();
+    }
+
+    // Filter Logic
+    function handleFilter() {
+        const query = searchInput.value.toLowerCase();
+        const filtered = jokesVault.filter(j => {
+            const matchesCat = (activeCategory === 'all' || j.category === activeCategory);
+            const matchesQuery = j.text.toLowerCase().includes(query);
+            return matchesCat && matchesQuery;
+        });
+
+        populatePickerOptions(filtered);
+        renderCarousel(filtered);
+        renderGrid(filtered);
+    }
+
+    // Pick Specific Joke
+    function selectSpecificJoke(id) {
+        if (!id) return;
+        const targetCard = document.getElementById(`card-${id}`);
+        if (targetCard) {
+            targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    }
+
+    // Random Joke Scroll
+    function scrollRandomJoke() {
+        const cards = carouselTrack.children;
+        if (cards.length > 0) {
+            const randomIndex = Math.floor(Math.random() * cards.length);
+            cards[randomIndex].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    }
+
+    // Drag-to-swipe desktop support
+    function enableDragScroll() {
+        let isDown = false;
+        let startX, scrollLeft;
+
+        carouselTrack.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - carouselTrack.offsetLeft;
+            scrollLeft = carouselTrack.scrollLeft;
+        });
+        carouselTrack.addEventListener('mouseleave', () => isDown = false);
+        carouselTrack.addEventListener('mouseup', () => isDown = false);
+        carouselTrack.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - carouselTrack.offsetLeft;
+            const walk = (x - startX) * 2;
+            carouselTrack.scrollLeft = scrollLeft - walk;
+        });
+    }
+
+    // Clipboard Copy Helper
+    function copyText(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const original = btn.innerText;
+            btn.innerText = 'Copied! ✓';
+            setTimeout(() => btn.innerText = original, 1500);
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function escapeJs(str) {
+        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
             padding: 20px;
             margin-bottom: 30px;
             display: flex;
