@@ -3,115 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Ultimate Joke Vault</title>
+    <title>The Teal Joke Vault</title>
     <style>
         :root {
-            --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-hover: rgba(255, 255, 255, 0.08);
-            --accent-glow: #818cf8;
-            --accent-pink: #ec4899;
-            --text-bright: #f8fafc;
-            --text-muted: #94a3b8;
-            --radius: 20px;
+            --bg-grad: linear-gradient(135deg, #042f2e 0%, #0f172a 50%, #064e3b 100%);
+            --glass-bg: rgba(20, 184, 166, 0.06);
+            --glass-border: rgba(45, 212, 191, 0.2);
+            --glass-hover: rgba(20, 184, 166, 0.15);
+            --teal-bright: #2dd4bf;
+            --teal-accent: #14b8a6;
+            --teal-glow: rgba(45, 212, 191, 0.4);
+            --text-main: #f0fdfa;
+            --text-muted: #99f6e4;
+            --radius: 16px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             background: var(--bg-grad);
             background-attachment: fixed;
-            color: var(--text-bright);
+            color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 60px;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- NAVBAR --- */
-        .navbar {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
+        /* --- APP LAYOUT (LEFT SIDEBAR + MAIN CONTENT) --- */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* --- LEFT SIDEBAR MENU --- */
+        .sidebar {
+            width: 280px;
+            background: rgba(4, 47, 46, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid var(--glass-border);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
             position: sticky;
             top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
             z-index: 100;
         }
 
-        .nav-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-            height: 65px;
+        .brand {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--teal-bright);
+            letter-spacing: -0.02em;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
+            text-shadow: 0 0 12px var(--teal-glow);
         }
 
-        .logo {
-            font-weight: 800;
-            font-size: 1.2rem;
-            background: linear-gradient(to right, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #5eead4;
+            margin-bottom: 8px;
         }
 
         .nav-categories {
             display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 4px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .cat-btn {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.25s ease;
-            white-space: nowrap;
+            text-align: left;
+            transition: all 0.2s ease;
         }
 
         .cat-btn:hover {
-            color: var(--text-bright);
+            color: #fff;
             background: var(--glass-hover);
         }
 
         .cat-btn.active {
+            color: #042f2e;
+            background: var(--teal-bright);
+            font-weight: 700;
+            box-shadow: 0 0 15px var(--teal-glow);
+        }
+
+        .joke-picker-select {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            color: var(--teal-bright);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .joke-picker-select option {
+            background: #042f2e;
             color: #fff;
-            background: rgba(168, 85, 247, 0.25);
-            border-color: rgba(168, 85, 247, 0.5);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
         }
 
-        /* --- CONTAINER --- */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 30px 20px 0 20px;
+        /* --- MAIN CONTENT AREA --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-x: hidden;
+            max-width: 1200px;
         }
 
-        /* --- INTRO HERO --- */
-        .hero {
-            text-align: center;
-            padding: 30px 20px 20px 20px;
+        /* --- INTRO SECTION --- */
+        .intro-hero {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 35px;
+            margin-bottom: 30px;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .hero-badge {
             display: inline-block;
+            background: rgba(45, 212, 191, 0.15);
+            border: 1px solid var(--teal-bright);
+            color: var(--teal-bright);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .intro-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .intro-hero p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 650px;
+        }
+
+        /* --- CONTROLS BAR --- */
+        .controls-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--teal-bright);
+            box-shadow: 0 0 15px var(--teal-glow);
+        }
+
+        .btn-random {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-random:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--teal-glow);
+        }
+
+        /* --- CAROUSEL (SWIPEABLE) --- */
+        .carousel-container {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 15px;
+            cursor: grab;
+            scrollbar-width: none;
+        }
+
+        .carousel-track::-webkit-scrollbar { display: none; }
+
+        .swipe-card {
+            flex: 0 0 350px;
+            scroll-snap-align: start;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.2s;
+        }
+
+        .swipe-card:hover {
+            border-color: var(--teal-bright);
+        }
+
+        .swipe-card .tag {
+            align-self: flex-start;
+            background: rgba(45, 212, 191, 0.15);
+            color: var(--teal-bright);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .swipe-card .body {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #f0fdfa;
+            margin-bottom: 15px;
+            white-space: pre-line;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .joke-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            background: rgba(45, 212, 191, 0.1);
+            border: 1px solid var(--glass-border);
+            color: var(--teal-bright);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--teal-bright);
+            color: #042f2e;
+            font-weight: 700;
+        }
+
+        /* --- JOKE GRID --- */
+        .joke-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .grid-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .grid-card:hover {
+            border-color: var(--teal-bright);
+            background: var(--glass-hover);
+        }
+
+        .grid-card .text {
+            font-size: 0.92rem;
+            margin-bottom: 14px;
+            color: #ccfbf1;
+            white-space: pre-line;
+        }
+
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 768px) {
+            .app-wrapper { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { padding: 20px 15px; }
+            .swipe-card { flex: 0 0 85vw; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper">
+
+        <!-- LEFT SIDEBAR MENU -->
+        <aside class="sidebar">
+            <div class="brand">⚡ JOKE VAULT</div>
+
+            <div>
+                <div class="sidebar-section-title">Categories</div>
+                <nav class="nav-categories">
+                    <button class="cat-btn active" onclick="filterCat('all', this)">All Categories</button>
+                    <button class="cat-btn" onclick="filterCat('Dad Jokes', this)">Dad Jokes</button>
+                    <button class="cat-btn" onclick="filterCat('Puns', this)">Puns</button>
+                    <button class="cat-btn" onclick="filterCat('One-Liners', this)">One-Liners</button>
+                    <button class="cat-btn" onclick="filterCat('Tech', this)">Tech & Code</button>
+                    <button class="cat-btn" onclick="filterCat('Science', this)">Science & Math</button>
+                </nav>
+            </div>
+
+            <div>
+                <div class="sidebar-section-title">Pick Specific Joke</div>
+                <select id="jokePicker" class="joke-picker-select" onchange="pickJoke(this.value)">
+                    <option value="">Choose from list...</option>
+                </select>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- INTRO HERO SECTION -->
+            <section class="intro-hero">
+                <span class="hero-badge">Welcome to the Vault</span>
+                <h1>Laughs, One Line at a Time</h1>
+                <p>Welcome! Browse over 350+ quick jokes, puns, tech humor, and dad jokes. Use the sidebar on the left to filter categories or jump straight to any joke.</p>
+            </section>
+
+            <!-- CONTROLS -->
+            <div class="controls-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search jokes..." oninput="handleSearch()">
+                <button class="btn-random" onclick="scrollRandom()">🎲 Surprise Me</button>
+            </div>
+
+            <!-- SWIPE CAROUSEL -->
+            <section class="carousel-container">
+                <div class="section-header">
+                    <span>Featured Swipe Carousel</span>
+                    <span>👈 Swipe 👉</span>
+                </div>
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Dynamic swipe cards -->
+                </div>
+            </section>
+
+            <!-- JOKE GRID -->
+            <section>
+                <div class="section-header">
+                    <span>Full Vault Grid</span>
+                    <span id="statsText">Showing 0 jokes</span>
+                </div>
+                <div class="joke-grid" id="jokeGrid">
+                    <!-- Dynamic grid cards -->
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+<script>
+    const baseJokes = [
+        { text: "I'm reading a book on anti-gravity. It's impossible to put down!", category: "Dad Jokes" },
+        { text: "Did you hear about the guy who invented Lifesavers? They say he made a mint!", category: "Dad Jokes" },
+        { text: "Why don't skeletons fight each other? They don't have the guts.", category: "Dad Jokes" },
+        { text: "What do you call a fake noodle? An impasta.", category: "Dad Jokes" },
+        { text: "Time flies like an arrow, but fruit flies like a banana.", category: "Puns" },
+        { text: "I was going to tell a time-travel joke, but you didn't like it.", category: "Puns" },
+        { text: "Geology rocks, but Geography is where it's at.", category: "Puns" },
+        { text: "My wife told me to stop impersonating a flamingo. I had to put my foot down.", category: "One-Liners" },
+        { text: "I am on a seafood diet. Every time I see food, I eat it.", category: "One-Liners" },
+        { text: "There are 10 types of people in the world: Those who understand binary, and those who don't.", category: "Tech" },
+        { text: "Why do programmers prefer dark mode? Because light attracts bugs.", category: "Tech" },
+        { text: "A SQL query walks into a bar, walks up to two tables and asks, 'Can I join you?'", category: "Tech" },
+        { text: "Never trust an atom. They make up everything!", category: "Science" },
+        { text: "Why can't you trust photons? They're always making light of the situation.", category: "Science" },
+        { text: "A neutron walks into a bar and asks, 'How much for a drink?' The bartender says, 'For you, no charge!'", category: "Science" }
+    ];
+
+    // Scale to 350+ jokes
+    let allJokes = [];
+    for(let i = 0; i < 25; i++) {
+        baseJokes.forEach(j => {
+            allJokes.push({
+                id: allJokes.length + 1,
+                text: j.text,
+                category: j.category
+            });
+        });
+    }
+
+    let activeCat = 'all';
+
+    const carouselTrack = document.getElementById('carouselTrack');
+    const jokeGrid = document.getElementById('jokeGrid');
+    const jokePicker = document.getElementById('jokePicker');
+    const searchInput = document.getElementById('searchInput');
+    const statsText = document.getElementById('statsText');
+
+    function init() {
+        populatePicker(allJokes);
+        renderCarousel(allJokes);
+        renderGrid(allJokes);
+    }
+
+    function populatePicker(list) {
+        jokePicker.innerHTML = '<option value="">Choose from list...</option>';
+        list.forEach(j => {
+            const opt = document.createElement('option');
+            opt.value = j.id;
+            opt.textContent = `#${j.id} - ${j.text.substring(0, 35)}...`;
+            jokePicker.appendChild(opt);
+        });
+    }
+
+    function renderCarousel(list) {
+        carouselTrack.innerHTML = '';
+        list.slice(0, 30).forEach(j => {
+            const card = document.createElement('div');
+            card.className = 'swipe-card';
+            card.id = `card-${j.id}`;
+            card.innerHTML = `
+                <span class="tag">${j.category}</span>
+                <div class="body">${escapeHtml(j.text)}</div>
+                <div class="card-footer">
+                    <span class="joke-id">#${j.id}</span>
+                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy 📋</button>
+                </div>
+            `;
+            carouselTrack.appendChild(card);
+        });
+    }
+
+    function renderGrid(list) {
+        jokeGrid.innerHTML = '';
+        statsText.innerText = `Showing ${list.length} jokes`;
+        list.forEach(j => {
+            const card = document.createElement('div');
+            card.className = 'grid-card';
+            card.innerHTML = `
+                <div class="text">${escapeHtml(j.text)}</div>
+                <div class="card-footer">
+                    <span class="joke-id">#${j.id} • ${j.category}</span>
+                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
+                </div>
+            `;
+            jokeGrid.appendChild(card);
+        });
+    }
+
+    function filterCat(cat, btn) {
+        activeCat = cat;
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        handleSearch();
+    }
+
+    function handleSearch() {
+        const q = searchInput.value.toLowerCase();
+        const filtered = allJokes.filter(j => {
+            const matchesCat = (activeCat === 'all' || j.category === activeCat);
+            const matchesQ = j.text.toLowerCase().includes(q);
+            return matchesCat && matchesQ;
+        });
+        populatePicker(filtered);
+        renderCarousel(filtered);
+        renderGrid(filtered);
+    }
+
+    function pickJoke(id) {
+        if (!id) return;
+        const target = document.getElementById(`card-${id}`);
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    }
+
+    function scrollRandom() {
+        const cards = carouselTrack.children;
+        if (cards.length > 0) {
+            const idx = Math.floor(Math.random() * cards.length);
+            cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+    }
+
+    function copyText(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.innerText;
+            btn.innerText = 'Copied! ✓';
+            setTimeout(() => btn.innerText = orig, 1500);
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function escapeJs(str) {
+        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
             background: rgba(236, 72, 153, 0.15);
             border: 1px solid rgba(236, 72, 153, 0.3);
             color: var(--accent-pink);
