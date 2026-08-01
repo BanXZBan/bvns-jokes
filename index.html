@@ -1,924 +1,1235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Urban • Creator's Multiverse</title>
-  <style>
-    /* ===== RESET & BASE ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0a0f1e;
-      color: #e0f0ff;
-      overflow: hidden;
-      height: 100vh;
-      width: 100vw;
-    }
-
-    /* ===== LOADING SCREEN ===== */
-    #loading-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: #0a0f1e;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 1.2s ease, visibility 1.2s ease;
-    }
-
-    #loading-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .loader-title {
-      font-family: 'Orbitron', monospace;
-      font-size: 2.4rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #00d4ff, #00ff88, #00d4ff);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 2s ease-in-out infinite;
-      margin-bottom: 30px;
-      letter-spacing: 4px;
-    }
-
-    @keyframes shimmer {
-      0%,
-      100% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-    }
-
-    .loader-bar-track {
-      width: 280px;
-      height: 6px;
-      background: #1a2a3a;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .loader-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00d4ff, #00ff88, #00d4ff);
-      background-size: 200% 100%;
-      border-radius: 12px;
-      animation: fillProgress 2.8s ease-in-out forwards, barShimmer 1.4s linear infinite;
-    }
-
-    @keyframes fillProgress {
-      0% {
-        width: 0%;
-      }
-      100% {
-        width: 100%;
-      }
-    }
-
-    @keyframes barShimmer {
-      0% {
-        background-position: 0% 0%;
-      }
-      100% {
-        background-position: 200% 0%;
-      }
-    }
-
-    .loader-text {
-      margin-top: 18px;
-      font-size: 0.85rem;
-      color: #5a8aaa;
-      letter-spacing: 2px;
-      font-weight: 300;
-    }
-
-    /* ===== INTRO OVERLAY (LOKI) ===== */
-    #intro-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9998;
-      background: rgba(10, 15, 30, 0.95);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 1.2s ease, transform 1.2s ease;
-      opacity: 0;
-      pointer-events: none;
-      backdrop-filter: blur(6px);
-    }
-
-    #intro-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    #intro-overlay.fade-out {
-      opacity: 0;
-      transform: scale(1.05);
-      pointer-events: none;
-    }
-
-    .loki-container {
-      text-align: center;
-      animation: lokiFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes lokiFloat {
-      0%,
-      100% {
-        transform: translateY(0px) rotate(-1deg);
-      }
-      50% {
-        transform: translateY(-12px) rotate(1deg);
-      }
-    }
-
-    .loki-face {
-      font-size: 6rem;
-      line-height: 1;
-      filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.4));
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    .loki-name {
-      font-family: 'Orbitron', monospace;
-      font-size: 2.8rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #00ff88, #00d4ff, #00ff88);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 3s ease-in-out infinite;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-    }
-
-    .loki-quote {
-      font-size: 1.1rem;
-      color: #8ac4e0;
-      margin-top: 16px;
-      font-style: italic;
-      letter-spacing: 1px;
-      border-left: 3px solid #00d4ff;
-      padding-left: 20px;
-      max-width: 500px;
-      opacity: 0.8;
-    }
-
-    .loki-sub {
-      margin-top: 28px;
-      font-size: 0.8rem;
-      color: #4a7a8a;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      animation: pulseText 2s ease-in-out infinite;
-    }
-
-    @keyframes pulseText {
-      0%,
-      100% {
-        opacity: 0.4;
-      }
-      50% {
-        opacity: 1;
-      }
-    }
-
-    .skip-intro {
-      margin-top: 40px;
-      background: transparent;
-      border: 1px solid #2a5a6a;
-      color: #6aaac0;
-      padding: 10px 30px;
-      border-radius: 40px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: 0.3s ease;
-      letter-spacing: 2px;
-      font-family: 'Inter', sans-serif;
-      background: rgba(0, 212, 255, 0.05);
-    }
-
-    .skip-intro:hover {
-      background: rgba(0, 212, 255, 0.15);
-      border-color: #00d4ff;
-      color: #e0f0ff;
-      transform: scale(1.04);
-    }
-
-    /* ===== MAIN WEBSITE (visible after intro) ===== */
-    #main-site {
-      display: none;
-      width: 100vw;
-      height: 100vh;
-      overflow-y: auto;
-      overflow-x: hidden;
-      background: #0a0f1e;
-      position: relative;
-    }
-
-    #main-site.active {
-      display: block;
-    }
-
-    /* Animated background */
-    .bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background: linear-gradient(135deg, #0a0f1e 0%, #0d1a2b 30%, #0a2a2a 60%, #0d1a2b 80%, #0a0f1e 100%);
-      background-size: 400% 400%;
-      animation: bgFlow 18s ease-in-out infinite;
-    }
-
-    @keyframes bgFlow {
-      0%,
-      100% {
-        background-position: 0% 50%;
-      }
-      25% {
-        background-position: 100% 0%;
-      }
-      50% {
-        background-position: 100% 100%;
-      }
-      75% {
-        background-position: 0% 100%;
-      }
-    }
-
-    /* Floating particles (teal/cyan/green dots) */
-    .particles {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.15;
-      animation: floatParticle linear infinite;
-    }
-
-    @keyframes floatParticle {
-      0% {
-        transform: translateY(110vh) rotate(0deg) scale(0.8);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.15;
-      }
-      90% {
-        opacity: 0.15;
-      }
-      100% {
-        transform: translateY(-10vh) rotate(720deg) scale(1.2);
-        opacity: 0;
-      }
-    }
-
-    /* ===== CONTENT WRAPPER ===== */
-    .content-wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 28px 80px 28px;
-    }
-
-    /* ===== HEADER / NAV ===== */
-    .header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0 28px 0;
-      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
-      margin-bottom: 36px;
-    }
-
-    .logo {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #00d4ff, #00ff88);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 2px;
-    }
-
-    .logo span {
-      font-weight: 300;
-      opacity: 0.5;
-      font-size: 0.9rem;
-      -webkit-text-fill-color: #5a8aaa;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    .nav-links a {
-      color: #8ab4d0;
-      text-decoration: none;
-      transition: 0.3s ease;
-      border-bottom: 2px solid transparent;
-      padding-bottom: 4px;
-    }
-
-    .nav-links a:hover {
-      color: #00d4ff;
-      border-bottom-color: #00d4ff;
-    }
-
-    /* ===== HERO SECTION ===== */
-    .hero {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 50px;
-    }
-
-    .hero-text {
-      flex: 1 1 300px;
-    }
-
-    .hero-text .greeting {
-      font-size: 0.85rem;
-      color: #5a9aaa;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .hero-text h1 {
-      font-size: 3.2rem;
-      font-weight: 900;
-      line-height: 1.1;
-      background: linear-gradient(135deg, #fff, #00d4ff, #00ff88);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 300% 300%;
-      animation: shimmer 4s ease-in-out infinite;
-    }
-
-    .hero-text .tagline {
-      font-size: 1.2rem;
-      color: #8ac0d8;
-      margin-top: 12px;
-      font-weight: 300;
-    }
-
-    .hero-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px 36px;
-      margin-top: 24px;
-      padding: 18px 22px;
-      background: rgba(0, 212, 255, 0.04);
-      border-radius: 20px;
-      border: 1px solid rgba(0, 212, 255, 0.08);
-    }
-
-    .hero-stats .stat-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-stats .stat-item .label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: #5a8a9a;
-      letter-spacing: 1px;
-    }
-
-    .hero-stats .stat-item .value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #e0f0ff;
-    }
-
-    .hero-stats .stat-item .value.teal {
-      color: #00d4ff;
-    }
-    .hero-stats .stat-item .value.cyan {
-      color: #00ffcc;
-    }
-    .hero-stats .stat-item .value.green {
-      color: #00ff88;
-    }
-
-    /* ===== SOCIAL LINKS ===== */
-    .social-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .social-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 20px;
-      border-radius: 40px;
-      background: rgba(0, 212, 255, 0.06);
-      border: 1px solid rgba(0, 212, 255, 0.12);
-      color: #b0d8e8;
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: 0.3s ease;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .social-btn:hover {
-      background: rgba(0, 212, 255, 0.14);
-      border-color: #00d4ff;
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
-    }
-
-    .social-btn.discord {
-      border-color: rgba(88, 101, 242, 0.3);
-    }
-    .social-btn.discord:hover {
-      background: rgba(88, 101, 242, 0.15);
-      border-color: #5865f2;
-    }
-
-    .social-btn.github {
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-    .social-btn.github:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: #fff;
-    }
-
-    .social-btn.tiktok {
-      border-color: rgba(255, 0, 80, 0.25);
-    }
-    .social-btn.tiktok:hover {
-      background: rgba(255, 0, 80, 0.12);
-      border-color: #ff0050;
-    }
-
-    .social-btn.instagram {
-      border-color: rgba(225, 48, 108, 0.25);
-    }
-    .social-btn.instagram:hover {
-      background: rgba(225, 48, 108, 0.12);
-      border-color: #e1306c;
-    }
-
-    /* ===== PROJECT FOLDER SYSTEM ===== */
-    .projects-section {
-      margin-top: 50px;
-    }
-
-    .projects-section h2 {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #00d4ff;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .projects-section h2::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), transparent);
-    }
-
-    .folder-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-
-    .folder-item {
-      background: rgba(0, 212, 255, 0.03);
-      border: 1px solid rgba(0, 212, 255, 0.08);
-      border-radius: 20px;
-      padding: 20px 22px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .folder-item::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.02), transparent);
-      opacity: 0;
-      transition: 0.4s ease;
-    }
-
-    .folder-item:hover::before {
-      opacity: 1;
-    }
-
-    .folder-item:hover {
-      border-color: rgba(0, 212, 255, 0.25);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0, 212, 255, 0.05);
-    }
-
-    .folder-item.active {
-      border-color: #00d4ff;
-      background: rgba(0, 212, 255, 0.06);
-    }
-
-    .folder-icon {
-      font-size: 2.2rem;
-      margin-bottom: 6px;
-      display: block;
-      transition: 0.3s ease;
-    }
-
-    .folder-item:hover .folder-icon {
-      transform: scale(1.08) rotate(-2deg);
-    }
-
-    .folder-item .folder-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #e0f0ff;
-      margin-bottom: 4px;
-    }
-
-    .folder-item .folder-sub {
-      font-size: 0.8rem;
-      color: #6a9aaa;
-      font-weight: 300;
-    }
-
-    .folder-item .folder-expand {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-      opacity: 0;
-    }
-
-    .folder-item.active .folder-expand {
-      max-height: 500px;
-      opacity: 1;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(0, 212, 255, 0.08);
-    }
-
-    .folder-item .folder-expand p {
-      font-size: 0.9rem;
-      color: #b0d0e0;
-      line-height: 1.7;
-    }
-
-    .folder-item .folder-expand .badge-project {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 4px 16px;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      background: rgba(0, 212, 255, 0.08);
-      color: #00d4ff;
-      border: 1px solid rgba(0, 212, 255, 0.12);
-    }
-
-    .folder-item .folder-expand .badge-project.gold {
-      background: rgba(255, 215, 0, 0.08);
-      color: #ffd700;
-      border-color: rgba(255, 215, 0, 0.15);
-    }
-
-    .click-hint {
-      font-size: 0.7rem;
-      color: #3a6a7a;
-      margin-top: 10px;
-      letter-spacing: 1px;
-      opacity: 0.6;
-    }
-
-    /* ===== FOOTER ===== */
-    .footer {
-      margin-top: 60px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(0, 212, 255, 0.06);
-      text-align: center;
-      font-size: 0.8rem;
-      color: #3a6a7a;
-      letter-spacing: 1px;
-    }
-
-    .footer span {
-      color: #00d4ff;
-    }
-
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0a0f1e;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1a4a5a;
-      border-radius: 12px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #2a6a7a;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 640px) {
-      .hero-text h1 {
-        font-size: 2.4rem;
-      }
-      .header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-      .nav-links {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .social-links {
-        flex-direction: column;
-        width: 100%;
-      }
-      .social-btn {
-        justify-content: center;
-      }
-      .loki-name {
-        font-size: 1.8rem;
-      }
-      .loki-face {
-        font-size: 4rem;
-      }
-      .loader-title {
-        font-size: 1.6rem;
-      }
-      .folder-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urban • Multiverse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #080e1a;
+            color: #e0f0ff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #080e1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff, #00ff88, #00d4ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 2s ease-in-out infinite;
+            margin-bottom: 30px;
+            letter-spacing: 6px;
+        }
+
+        @keyframes shimmer {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .loader-bar-track {
+            width: 300px;
+            height: 5px;
+            background: #1a2a3a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88, #00d4ff);
+            background-size: 200% 100%;
+            border-radius: 12px;
+            animation: fillProgress 2.8s ease-in-out forwards, barShimmer 1.4s linear infinite;
+        }
+
+        @keyframes fillProgress {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes barShimmer {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 200% 0%;
+            }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #4a8aaa;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+
+        /* ===== INTRO OVERLAY (LOKI) ===== */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(8, 14, 26, 0.96);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+        }
+
+        #intro-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #intro-overlay.fade-out {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .loki-container {
+            text-align: center;
+            animation: lokiFloat 3.5s ease-in-out infinite;
+            padding: 20px;
+        }
+
+        @keyframes lokiFloat {
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-0.5deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(0.5deg);
+            }
+        }
+
+        .loki-character {
+            font-size: 7rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 60px rgba(0, 212, 255, 0.3));
+            display: block;
+            margin-bottom: 8px;
+            animation: lokiGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes lokiGlow {
+            0% {
+                filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.2));
+            }
+            100% {
+                filter: drop-shadow(0 0 80px rgba(0, 255, 136, 0.4));
+            }
+        }
+
+        .loki-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ff88, #00d4ff, #00ff88);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .loki-title {
+            font-size: 1rem;
+            color: #5a9aaa;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-weight: 300;
+        }
+
+        .loki-quote {
+            font-size: 1.1rem;
+            color: #8ac4e0;
+            margin-top: 20px;
+            font-style: italic;
+            letter-spacing: 1px;
+            border-left: 3px solid #00d4ff;
+            padding-left: 24px;
+            max-width: 520px;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        .enter-btn {
+            margin-top: 40px;
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 14px 48px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.4s ease;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+            background: rgba(0, 212, 255, 0.04);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enter-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.05));
+            transform: translateX(-100%);
+            transition: 0.6s ease;
+        }
+
+        .enter-btn:hover::before {
+            transform: translateX(0%);
+        }
+
+        .enter-btn:hover {
+            background: rgba(0, 212, 255, 0.12);
+            border-color: #00ff88;
+            color: #00ff88;
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.15);
+        }
+
+        .skip-hint {
+            margin-top: 18px;
+            font-size: 0.7rem;
+            color: #2a5a6a;
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+
+        /* ===== MAIN SITE ===== */
+        #main-site {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #080e1a;
+            position: relative;
+        }
+
+        #main-site.active {
+            display: block;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0, 212, 255, 0.02) 0%, transparent 50%),
+                #080e1a;
+            background-size: 100% 100%;
+        }
+
+        .bg-canvas::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.06;
+            z-index: 0;
+            pointer-events: none;
+            animation: orbFloat 20s ease-in-out infinite alternate;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #00d4ff;
+            top: -100px;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #00ff88;
+            bottom: -50px;
+            right: -50px;
+            animation-duration: 20s;
+            animation-delay: 5s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: #00ffcc;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+
+        @keyframes orbFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(60px, 40px) scale(1.2);
+            }
+        }
+
+        /* ===== CONTENT WRAPPER ===== */
+        .content-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 28px 60px 28px;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER / NAV ===== */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 24px 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.06);
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            font-weight: 300;
+            opacity: 0.4;
+            font-size: 0.8rem;
+            -webkit-text-fill-color: #5a8aaa;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #6a9aaa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: #b0d8e8;
+            background: rgba(0, 212, 255, 0.04);
+        }
+
+        .nav-btn.active {
+            color: #00d4ff;
+            border-color: rgba(0, 212, 255, 0.15);
+            background: rgba(0, 212, 255, 0.06);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            padding: 20px 0 40px 0;
+            display: none;
+            animation: fadeSlide 0.5s ease forwards;
+        }
+
+        .hero-section.active {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-text {
+            flex: 1 1 300px;
+        }
+
+        .hero-text .greeting {
+            font-size: 0.8rem;
+            color: #5a9aaa;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 300;
+        }
+
+        .hero-text h1 {
+            font-size: 3.6rem;
+            font-weight: 900;
+            line-height: 1.05;
+            background: linear-gradient(135deg, #fff 30%, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 300% 300%;
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .hero-text .tagline {
+            font-size: 1.2rem;
+            color: #8ac0d8;
+            margin-top: 12px;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 32px;
+            margin-top: 24px;
+            padding: 20px 24px;
+            background: rgba(0, 212, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.06);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-stats .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-stats .stat-item .label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #4a7a8a;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .hero-stats .stat-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e0f0ff;
+        }
+
+        .hero-stats .stat-item .value.teal {
+            color: #00d4ff;
+        }
+        .hero-stats .stat-item .value.cyan {
+            color: #00ffcc;
+        }
+        .hero-stats .stat-item .value.green {
+            color: #00ff88;
+        }
+
+        .hero-avatar {
+            flex: 0 0 160px;
+            text-align: center;
+        }
+
+        .hero-avatar .avatar-icon {
+            font-size: 7rem;
+            display: block;
+            filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.15));
+            animation: floatAvatar 4s ease-in-out infinite;
+        }
+
+        @keyframes floatAvatar {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ===== ABOUT SECTION ===== */
+        .about-section {
+            display: none;
+            animation: fadeSlide 0.5s ease forwards;
+        }
+
+        .about-section.active {
+            display: block;
+        }
+
+        .about-card {
+            background: rgba(0, 212, 255, 0.02);
+            border: 1px solid rgba(0, 212, 255, 0.06);
+            border-radius: 24px;
+            padding: 36px 40px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            transition: 0.3s ease;
+        }
+
+        .about-card:hover {
+            border-color: rgba(0, 212, 255, 0.12);
+            box-shadow: 0 12px 60px rgba(0, 212, 255, 0.04);
+        }
+
+        .about-card h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .about-card p {
+            font-size: 1rem;
+            color: #b0d0e0;
+            line-height: 1.8;
+            max-width: 700px;
+        }
+
+        .about-card .about-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .about-card .about-tags span {
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: rgba(0, 212, 255, 0.06);
+            border: 1px solid rgba(0, 212, 255, 0.08);
+            color: #8ac4e0;
+        }
+
+        .about-card .about-tags span.teal {
+            border-color: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+        }
+        .about-card .about-tags span.green {
+            border-color: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+        }
+        .about-card .about-tags span.cyan {
+            border-color: rgba(0, 255, 204, 0.15);
+            color: #00ffcc;
+        }
+
+        /* ===== TAB SECTIONS (Stories, Series, Games, Characters) ===== */
+        .tab-section {
+            display: none;
+            animation: fadeSlide 0.5s ease forwards;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .tab-section .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #00d4ff;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .tab-section .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), transparent);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .card-item {
+            background: rgba(0, 212, 255, 0.02);
+            border: 1px solid rgba(0, 212, 255, 0.06);
+            border-radius: 20px;
+            padding: 26px 24px;
+            transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: default;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.02), transparent);
+            opacity: 0;
+            transition: 0.4s ease;
+        }
+
+        .card-item:hover::before {
+            opacity: 1;
+        }
+
+        .card-item:hover {
+            transform: scale(1.04) translateY(-6px);
+            border-color: rgba(0, 212, 255, 0.15);
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(0, 212, 255, 0.02);
+        }
+
+        .card-item .card-icon {
+            font-size: 2.6rem;
+            display: block;
+            margin-bottom: 8px;
+            transition: 0.3s ease;
+        }
+
+        .card-item:hover .card-icon {
+            transform: scale(1.1) rotate(-3deg);
+        }
+
+        .card-item .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e0f0ff;
+            margin-bottom: 4px;
+        }
+
+        .card-item .card-sub {
+            font-size: 0.8rem;
+            color: #6a9aaa;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .card-item .card-desc {
+            font-size: 0.85rem;
+            color: #8ab4d0;
+            line-height: 1.6;
+        }
+
+        .card-item .card-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: rgba(0, 212, 255, 0.06);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.08);
+        }
+
+        .card-item .card-badge.gold {
+            background: rgba(255, 215, 0, 0.06);
+            color: #ffd700;
+            border-color: rgba(255, 215, 0, 0.1);
+        }
+        .card-item .card-badge.cyan {
+            background: rgba(0, 255, 204, 0.06);
+            color: #00ffcc;
+            border-color: rgba(0, 255, 204, 0.1);
+        }
+        .card-item .card-badge.green {
+            background: rgba(0, 255, 136, 0.06);
+            color: #00ff88;
+            border-color: rgba(0, 255, 136, 0.1);
+        }
+
+        /* ===== SOCIAL FOOTER ===== */
+        .footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 212, 255, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: #3a6a7a;
+            letter-spacing: 1px;
+        }
+
+        .footer-text span {
+            color: #00d4ff;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .footer-socials a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 40px;
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.06);
+            color: #8ab4d0;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .footer-socials a:hover {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.15);
+            color: #e0f0ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 212, 255, 0.06);
+        }
+
+        .footer-socials a.discord:hover {
+            border-color: rgba(88, 101, 242, 0.3);
+            background: rgba(88, 101, 242, 0.06);
+        }
+        .footer-socials a.github:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .footer-socials a.tiktok:hover {
+            border-color: rgba(255, 0, 80, 0.2);
+            background: rgba(255, 0, 80, 0.04);
+        }
+        .footer-socials a.instagram:hover {
+            border-color: rgba(225, 48, 108, 0.2);
+            background: rgba(225, 48, 108, 0.04);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080e1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a4a5a;
+            border-radius: 12px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2a6a7a;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-text h1 {
+                font-size: 2.6rem;
+            }
+            .header {
+                flex-direction: column;
+                gap: 14px;
+                align-items: stretch;
+            }
+            .nav-menu {
+                justify-content: center;
+            }
+            .nav-btn {
+                font-size: 0.65rem;
+                padding: 6px 12px;
+            }
+            .hero-grid {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+            .hero-stats {
+                justify-content: center;
+            }
+            .hero-avatar .avatar-icon {
+                font-size: 5rem;
+            }
+            .about-card {
+                padding: 24px 20px;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-socials {
+                justify-content: center;
+            }
+            .loki-character {
+                font-size: 5rem;
+            }
+            .loki-name {
+                font-size: 2.2rem;
+                letter-spacing: 4px;
+            }
+            .loader-title {
+                font-size: 2rem;
+            }
+            .loki-quote {
+                font-size: 0.9rem;
+                padding-left: 16px;
+                max-width: 90%;
+            }
+            .enter-btn {
+                padding: 12px 32px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            .content-wrap {
+                padding: 16px 14px 40px 14px;
+            }
+            .hero-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                padding: 16px;
+            }
+            .hero-stats .stat-item {
+                align-items: center;
+            }
+            .about-card .about-tags {
+                justify-content: center;
+            }
+            .card-item {
+                padding: 20px 18px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ===== LOADING SCREEN ===== -->
-  <div id="loading-screen">
-    <div class="loader-title">◈ URBAN ◈</div>
-    <div class="loader-bar-track">
-      <div class="loader-bar-fill"></div>
-    </div>
-    <div class="loader-text">loading multiverse...</div>
-  </div>
-
-  <!-- ===== INTRO OVERLAY (LOKI) ===== -->
-  <div id="intro-overlay">
-    <div class="loki-container">
-      <span class="loki-face">🌀</span>
-      <div class="loki-name">✦ L O K I ✦</div>
-      <div class="loki-quote">
-        “I don't write stories — I weave chaos into narratives.”
-      </div>
-      <div class="loki-sub">✦ trickster god · digital wanderer ✦</div>
-      <button class="skip-intro" id="enterBtn">⚡ enter the vault ⚡</button>
-    </div>
-  </div>
-
-  <!-- ===== MAIN SITE ===== -->
-  <div id="main-site">
-    <!-- Background -->
-    <div class="bg-canvas"></div>
-
-    <!-- Particles -->
-    <div class="particles" id="particles"></div>
-
-    <!-- Content -->
-    <div class="content-wrap">
-
-      <!-- Header -->
-      <header class="header">
-        <div class="logo">URBAN <span>// creator</span></div>
-        <div class="nav-links">
-          <a href="#">home</a>
-          <a href="#projects">projects</a>
-          <a href="#social">connect</a>
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loading-screen">
+        <div class="loader-title">◈ URBAN ◈</div>
+        <div class="loader-bar-track">
+            <div class="loader-bar-fill"></div>
         </div>
-      </header>
-
-      <!-- Hero -->
-      <section class="hero">
-        <div class="hero-text">
-          <div class="greeting">✦ welcome to my multiverse</div>
-          <h1>Urban</h1>
-          <div class="tagline">5'2" · Indonesia · storyteller & mixtape editor</div>
-
-          <div class="hero-stats">
-            <div class="stat-item">
-              <span class="label">height</span>
-              <span class="value teal">5'2"</span>
-            </div>
-            <div class="stat-item">
-              <span class="label">from</span>
-              <span class="value cyan">Indonesia</span>
-            </div>
-            <div class="stat-item">
-              <span class="label">tiktok</span>
-              <span class="value green">2K followers</span>
-            </div>
-            <div class="stat-item">
-              <span class="label">vibes</span>
-              <span class="value teal">teal · cyan · green</span>
-            </div>
-          </div>
-
-          <div class="social-links" id="social">
-            <a href="https://discord.com/users/1333681207484874786" target="_blank" class="social-btn discord">💬 Discord</a>
-            <a href="https://github.com/BanXZban" target="_blank" class="social-btn github">🐙 GitHub</a>
-            <a href="https://www.tiktok.com/@frbann1" target="_blank" class="social-btn tiktok">🎵 TikTok</a>
-            <a href="https://www.instagram.com/bvnka1" target="_blank" class="social-btn instagram">📸 Instagram</a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Projects -->
-      <section class="projects-section" id="projects">
-        <h2>📁 active projects</h2>
-
-        <div class="folder-grid">
-
-          <!-- FOLDER 1 -->
-          <div class="folder-item" onclick="toggleFolder(this)">
-            <span class="folder-icon">📂</span>
-            <div class="folder-title">The God Of Stories</div>
-            <div class="folder-sub">Creator's Choice · series</div>
-            <div class="folder-expand">
-              <p>
-                A narrative-driven project where the protagonist discovers they're
-                a character in a story being written by a higher entity —
-                and must rewrite their own fate.
-              </p>
-              <span class="badge-project gold">✦ active · chapter 4</span>
-            </div>
-            <div class="click-hint">↕ click to expand</div>
-          </div>
-
-          <!-- FOLDER 2 -->
-          <div class="folder-item" onclick="toggleFolder(this)">
-            <span class="folder-icon">📂</span>
-            <div class="folder-title">The Khaos Lord</div>
-            <div class="folder-sub">dark fantasy · novella</div>
-            <div class="folder-expand">
-              <p>
-                In a realm where order is enforced by divine law, one being
-                embraces pure chaos — and becomes the Khaos Lord. A story
-                about rebellion, identity, and breaking the cycle.
-              </p>
-              <span class="badge-project">⚡ worldbuilding phase</span>
-            </div>
-            <div class="click-hint">↕ click to expand</div>
-          </div>
-
-          <!-- FOLDER 3 (mixtape) -->
-          <div class="folder-item" onclick="toggleFolder(this)">
-            <span class="folder-icon">🎧</span>
-            <div class="folder-title">Mixtape Edits</div>
-            <div class="folder-sub">2K followers · TikTok</div>
-            <div class="folder-expand">
-              <p>
-                Professional mixtape editing — blending tracks, transitions,
-                and vibes. Currently working on a cyberpunk-themed mix
-                inspired by the stories I write.
-              </p>
-              <span class="badge-project">🎵 15+ mixes published</span>
-            </div>
-            <div class="click-hint">↕ click to expand</div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- Footer -->
-      <footer class="footer">
-        <span>✦</span> built by Urban · 2026 · all stories are doors <span>✦</span>
-      </footer>
-
+        <div class="loader-text">✦ loading multiverse ✦</div>
     </div>
-  </div>
 
-  <script>
-    // ===== TOGGLE FOLDER =====
-    function toggleFolder(el) {
-      el.classList.toggle('active');
-    }
+    <!-- ===== INTRO OVERLAY (LOKI) ===== -->
+    <div id="intro-overlay">
+        <div class="loki-container">
+            <span class="loki-character">🌀</span>
+            <div class="loki-name">✦ LOKI ✦</div>
+            <div class="loki-title">god of stories</div>
+            <div class="loki-quote">
+                “I don't just write stories — I weave chaos into narratives.<br />
+                Welcome to Urban's multiverse.”
+            </div>
+            <button class="enter-btn" id="enterBtn">⚡ enter ⚡</button>
+            <div class="skip-hint">press Enter or click anywhere</div>
+        </div>
+    </div>
 
-    // ===== PARTICLES =====
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const colors = ['#00d4ff', '#00ff88', '#00ffcc', '#1affd4'];
-      for (let i = 0; i < 45; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        const size = 4 + Math.random() * 12;
-        p.style.width = size + 'px';
-        p.style.height = size + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.background = colors[Math.floor(Math.random() * colors.length)];
-        p.style.animationDuration = 18 + Math.random() * 30 + 's';
-        p.style.animationDelay = Math.random() * 20 + 's';
-        p.style.opacity = 0.06 + Math.random() * 0.12;
-        container.appendChild(p);
-      }
-    }
-    createParticles();
+    <!-- ===== MAIN SITE ===== -->
+    <div id="main-site">
 
-    // ===== LOADING + INTRO SEQUENCE =====
-    window.addEventListener('load', function() {
-      const loading = document.getElementById('loading-screen');
-      const intro = document.getElementById('intro-overlay');
-      const mainSite = document.getElementById('main-site');
-      const enterBtn = document.getElementById('enterBtn');
+        <!-- Background -->
+        <div class="bg-canvas"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
 
-      // After loading bar finishes (3s), show intro
-      setTimeout(() => {
-        loading.classList.add('hidden');
-        intro.classList.add('active');
-      }, 3200);
+        <!-- Content -->
+        <div class="content-wrap">
 
-      // Enter button -> show main site
-      function enterSite() {
-        intro.classList.add('fade-out');
-        setTimeout(() => {
-          intro.classList.remove('active');
-          intro.style.display = 'none';
-          mainSite.classList.add('active');
-          document.body.style.overflow = 'auto';
-        }, 1200);
-      }
+            <!-- ===== HEADER ===== -->
+            <header class="header">
+                <div class="logo">URBAN <span>// multiverse</span></div>
+                <nav class="nav-menu">
+                    <button class="nav-btn active" data-tab="hero">Home</button>
+                    <button class="nav-btn" data-tab="about">About</button>
+                    <button class="nav-btn" data-tab="stories">Stories</button>
+                    <button class="nav-btn" data-tab="series">Series</button>
+                    <button class="nav-btn" data-tab="games">Games</button>
+                    <button class="nav-btn" data-tab="characters">Characters</button>
+                </nav>
+            </header>
 
-      enterBtn.addEventListener('click', enterSite);
+            <!-- ===== HERO SECTION ===== -->
+            <section class="hero-section active" id="tab-hero">
+                <div class="hero-grid">
+                    <div class="hero-text">
+                        <div class="greeting">✦ welcome to my multiverse</div>
+                        <h1>Urban</h1>
+                        <div class="tagline">5'2" · Indonesia · storyteller &amp; creator</div>
 
-      // Also allow clicking anywhere on intro (for fast access)
-      intro.addEventListener('click', function(e) {
-        if (e.target === intro || e.target.closest('.loki-container')) {
-          enterSite();
-        }
-      });
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <span class="label">height</span>
+                                <span class="value teal">5'2"</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">from</span>
+                                <span class="value cyan">Indonesia</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">vibes</span>
+                                <span class="value green">teal · cyan · green</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">role</span>
+                                <span class="value teal">writer &amp; editor</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-avatar">
+                        <span class="avatar-icon">🧙</span>
+                    </div>
+                </div>
+            </section>
 
-      // Keyboard: press Enter or Space to skip
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          if (intro.classList.contains('active')) {
-            enterSite();
-            e.preventDefault();
-          }
-        }
-      });
-    });
-  </script>
+            <!-- ===== ABOUT SECTION ===== -->
+            <section class="about-section" id="tab-about">
+                <div class="about-card">
+                    <h2>✦ About Me</h2>
+                    <p>
+                        Hey, I'm Urban — a 5'2" storyteller from Indonesia. I breathe life into words,
+                        weave chaos into narratives, and edit mixtapes like they're soundtracks for
+                        parallel universes. Whether I'm crafting god-level plots or just mining
+                        diamonds in Minecraft, I bring the same energy: <strong>create, disrupt, repeat.</strong>
+                    </p>
+                    <div class="about-tags">
+                        <span class="teal">✍️ writer</span>
+                        <span class="green">🎧 mixtape editor</span>
+                        <span class="cyan">🎮 gamer</span>
+                        <span class="teal">📖 storyteller</span>
+                        <span class="green">🌍 from Indonesia</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== STORIES SECTION ===== -->
+            <section class="tab-section" id="tab-stories">
+                <div class="section-title">📖 Stories</div>
+                <div class="card-grid">
+                    <div class="card-item">
+                        <span class="card-icon">📜</span>
+                        <div class="card-title">The God Of Stories</div>
+                        <div class="card-sub">Creator's Choice · series</div>
+                        <div class="card-desc">
+                            A narrative-driven project where the protagonist discovers they're
+                            a character in a story being written by a higher entity —
+                            and must rewrite their own fate.
+                        </div>
+                        <span class="card-badge gold">✦ active · chapter 4</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">⚡</span>
+                        <div class="card-title">The Khaos Lord</div>
+                        <div class="card-sub">dark fantasy · novella</div>
+                        <div class="card-desc">
+                            In a realm where order is enforced by divine law, one being
+                            embraces pure chaos — and becomes the Khaos Lord. A story
+                            about rebellion, identity, and breaking the cycle.
+                        </div>
+                        <span class="card-badge cyan">⚡ worldbuilding phase</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SERIES SECTION ===== -->
+            <section class="tab-section" id="tab-series">
+                <div class="section-title">📺 Favorite Series</div>
+                <div class="card-grid">
+                    <div class="card-item">
+                        <span class="card-icon">🧪</span>
+                        <div class="card-title">Breaking Bad</div>
+                        <div class="card-sub">crime · drama · masterpiece</div>
+                        <div class="card-desc">
+                            The transformation of Walter White from teacher to kingpin —
+                            a masterclass in character writing and moral decay.
+                        </div>
+                        <span class="card-badge gold">🐐 GOAT</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">⚖️</span>
+                        <div class="card-title">Better Call Saul</div>
+                        <div class="card-sub">crime · drama · prequel</div>
+                        <div class="card-desc">
+                            The tragic journey of Jimmy McGill becoming Saul Goodman.
+                            Slow-burn storytelling at its absolute finest.
+                        </div>
+                        <span class="card-badge cyan">🔥 masterpiece</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">🌀</span>
+                        <div class="card-title">Loki Season 2</div>
+                        <div class="card-sub">sci-fi · marvel · time</div>
+                        <div class="card-desc">
+                            The God of Stories embracing his glorious purpose.
+                            Time travel, chaos, and identity — peak Marvel.
+                        </div>
+                        <span class="card-badge green">⏳ variant</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== GAMES SECTION ===== -->
+            <section class="tab-section" id="tab-games">
+                <div class="section-title">🎮 Favorite Games</div>
+                <div class="card-grid">
+                    <div class="card-item">
+                        <span class="card-icon">⚔️</span>
+                        <div class="card-title">Mobile Legends</div>
+                        <div class="card-sub">MOBA · 5v5 · competitive</div>
+                        <div class="card-desc">
+                            Fast-paced team battles, endless strategy, and that sweet
+                            satisfaction of a well-timed ultimate.
+                        </div>
+                        <span class="card-badge cyan">🏆 main</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">⛏️</span>
+                        <div class="card-title">Minecraft</div>
+                        <div class="card-sub">sandbox · survival · creative</div>
+                        <div class="card-desc">
+                            Building worlds, exploring infinite biomes, and fighting creepers
+                            (badly). Favorite biome: Mushroom Fields.
+                        </div>
+                        <span class="card-badge green">🌿 builder</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CHARACTERS SECTION ===== -->
+            <section class="tab-section" id="tab-characters">
+                <div class="section-title">🦸 Favorite Marvel Characters</div>
+                <div class="card-grid">
+                    <div class="card-item">
+                        <span class="card-icon">🌀</span>
+                        <div class="card-title">Loki</div>
+                        <div class="card-sub">God of Stories · Variant</div>
+                        <div class="card-desc">
+                            The trickster who became a hero. Loki's journey from villain
+                            to the God of Stories is a testament to growth, chaos, and
+                            glorious purpose.
+                        </div>
+                        <span class="card-badge gold">👑 burdened with glory</span>
+                    </div>
+                    <div class="card-item">
+                        <span class="card-icon">👁️</span>
+                        <div class="card-title">Cyclops</div>
+                        <div class="card-sub">Scott Summers · X-Men</div>
+                        <div class="card-desc">
+                            The ultimate leader. Cyclops carries the weight of mutantkind
+                            on his shoulders — tactical genius with a heart of fire.
+                        </div>
+                        <span class="card-badge cyan">⚡ optic blast</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== FOOTER ===== -->
+            <footer class="footer">
+                <div class="footer-text">
+                    <span>✦</span> built by Urban · 2026 · all stories are doors <span>✦</span>
+                </div>
+                <div class="footer-socials">
+                    <a href="https://github.com/BanXZban" target="_blank" class="github">🐙 GitHub</a>
+                    <a href="https://tiktok.com/@frbann1" target="_blank" class="tiktok">🎵 TikTok</a>
+                    <a href="https://discord.com/users/1333681207484874786" target="_blank" class="discord">💬 Discord</a>
+                    <a href="https://www.instagram.com/bvnka1" target="_blank" class="instagram">📸 Instagram</a>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script>
+        // ===== LOADING + INTRO SEQUENCE =====
+        window.addEventListener('load', function() {
+            const loading = document.getElementById('loading-screen');
+            const intro = document.getElementById('intro-overlay');
+            const mainSite = document.getElementById('main-site');
+            const enterBtn = document.getElementById('enterBtn');
+
+            // After loading bar finishes (3s), show intro
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                intro.classList.add('active');
+            }, 3200);
+
+            // Function to enter the main site
+            function enterSite() {
+                intro.classList.add('fade-out');
+                setTimeout(() => {
+                    intro.classList.remove('active');
+                    intro.style.display = 'none';
+                    mainSite.classList.add('active');
+                    document.body.style.overflow = 'auto';
+                }, 1200);
+            }
+
+            // Enter button click
+            enterBtn.addEventListener('click', enterSite);
+
+            // Click anywhere on intro to enter
+            intro.addEventListener('click', function(e) {
+                if (e.target === intro || e.target.closest('.loki-container')) {
+                    enterSite();
+                }
+            });
+
+            // Keyboard: Enter or Space to skip
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (intro.classList.contains('active')) {
+                        enterSite();
+                        e.preventDefault();
+                    }
+                }
+            });
+        });
+
+        // ===== TAB NAVIGATION =====
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active from all nav buttons
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Hide all sections
+                document.querySelectorAll('.hero-section, .about-section, .tab-section').forEach(s => {
+                    s.classList.remove('active');
+                });
+
+                // Show the target section
+                const target = this.dataset.tab;
+                const targetEl = document.getElementById('tab-' + target);
+                if (targetEl) {
+                    targetEl.classList.add('active');
+                }
+
+                // Scroll to top of content
+                document.querySelector('.content-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // ===== CARD INTERACTION (extra hover feedback) =====
+        document.querySelectorAll('.card-item').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = '0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            });
+        });
+
+        // ===== CONSOLE EASTER EGG =====
+        console.log('🌀 Urban\'s Multiverse loaded.');
+        console.log('📖 "I don\'t just write stories — I weave chaos into narratives."');
+        console.log('⛏️ 5\'2" of creative energy from Indonesia.');
+        console.log('🎮 Keep building. Keep writing. Keep disrupting.');
+    </script>
 
 </body>
 </html>
