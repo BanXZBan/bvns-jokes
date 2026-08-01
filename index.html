@@ -1,660 +1,1092 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Joke Vault</title>
-    <style>
-        :root {
-            --bg-dark: #041f1e;
-            --bg-grad: linear-gradient(135deg, #021a19 0%, #0a2523 50%, #031413 100%);
-            --sidebar-bg: rgba(4, 28, 27, 0.95);
-            --glass-card: rgba(20, 184, 166, 0.07);
-            --glass-border: rgba(45, 212, 191, 0.2);
-            --glass-hover: rgba(20, 184, 166, 0.16);
-            --teal-bright: #2dd4bf;
-            --teal-accent: #14b8a6;
-            --teal-glow: rgba(45, 212, 191, 0.35);
-            --text-main: #f0fdfa;
-            --text-muted: #81e6d9;
-            --radius: 16px;
-            --sidebar-width: 270px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | Urban - Writer, Developer & Game Designer</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+  <style>
+    /* ==========================================================================
+       1. VARIABLES & RESET
+       ========================================================================== */
+    :root {
+      --bg-main: #0a0c10;
+      --bg-card: #12161f;
+      --bg-card-hover: #181e2a;
+      --bg-nav: rgba(10, 12, 16, 0.85);
+      --accent-primary: #6366f1; /* Indigo */
+      --accent-hover: #4f46e5;
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(99, 102, 241, 0.4);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      --container-max: 1280px;
+    }
 
-        body {
-            background: var(--bg-grad);
-            background-attachment: fixed;
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* --- MAIN LAYOUT --- */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-        }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-        /* --- COLLAPSIBLE SIDEBAR --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--sidebar-bg);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-right: 1px solid var(--glass-border);
-            padding: 24px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 200;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-        /* Collapsed state */
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
 
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .container {
+      width: 90%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+    }
 
-        .brand {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: var(--teal-bright);
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-shadow: 0 0 10px var(--teal-glow);
-        }
+    /* ==========================================================================
+       2. NAVIGATION BAR
+       ========================================================================== */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: var(--bg-nav);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
 
-        .close-sidebar-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.4rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: color 0.2s;
-        }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
 
-        .close-sidebar-btn:hover {
-            color: #fff;
-        }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .sidebar-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--teal-bright);
-            margin-bottom: 10px;
-        }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
 
-        .category-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+    .nav-link {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+      position: relative;
+    }
 
-        .cat-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-muted);
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+    }
 
-        .cat-btn:hover {
-            color: #fff;
-            background: var(--glass-hover);
-        }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent-gradient);
+      border-radius: 2px;
+    }
 
-        .cat-btn.active {
-            color: #041f1e;
-            background: var(--teal-bright);
-            font-weight: 700;
-            box-shadow: 0 0 15px var(--teal-glow);
-        }
+    .mobile-toggle {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--text-main);
+      cursor: pointer;
+    }
 
-        .picker-select {
-            width: 100%;
-            background: rgba(4, 15, 15, 0.9);
-            border: 1px solid var(--glass-border);
-            color: var(--teal-bright);
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
-        }
+    /* ==========================================================================
+       3. HERO / PAGE HEADER
+       ========================================================================== */
+    .page-hero {
+      padding: 140px 0 60px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12) 0%, rgba(10, 12, 16, 0) 70%);
+    }
 
-        .picker-select option {
-            background: #041f1e;
-            color: #fff;
-        }
+    .page-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
 
-        /* --- CONTENT AREA & TOPBAR --- */
-        .content-area {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 24px 32px 40px 32px;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 1300px;
-        }
+    .page-title span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        .content-area.expanded {
-            margin-left: 0;
-        }
+    .page-subtitle {
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      font-size: 1.1rem;
+    }
 
-        /* --- TOP NAV / TOGGLE BAR --- */
-        .top-bar {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+    /* ==========================================================================
+       4. FILTER CONTROLS
+       ========================================================================== */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+    }
 
-        .sidebar-toggle-btn {
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            color: var(--teal-bright);
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.6rem 1.4rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .sidebar-toggle-btn:hover {
-            background: var(--teal-accent);
-            color: #041f1e;
-            box-shadow: 0 0 12px var(--teal-glow);
-        }
+    .filter-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text-main);
+    }
 
-        /* --- HUMAN INTRO HERO --- */
-        .intro-hero {
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0.12) 0%, rgba(3, 20, 19, 0.5) 100%);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius);
-            padding: 36px;
-            margin-bottom: 28px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
+    .filter-btn.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+    }
 
-        .hero-tag {
-            display: inline-block;
-            background: rgba(45, 212, 191, 0.15);
-            border: 1px solid var(--teal-bright);
-            color: var(--teal-bright);
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            letter-spacing: 0.05em;
-        }
+    /* ==========================================================================
+       5. MAIN CONTENT LAYOUT (GRID + SIDEBAR)
+       ========================================================================== */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 2.5rem;
+      align-items: start;
+      margin-bottom: 5rem;
+    }
 
-        .intro-hero h1 {
-            font-size: clamp(1.8rem, 4vw, 2.6rem);
-            font-weight: 900;
-            margin-bottom: 10px;
-            color: #ffffff;
-            letter-spacing: -0.02em;
-        }
+    /* Portfolio Grid */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
 
-        .intro-hero p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.6;
-            max-width: 680px;
-        }
+    /* Project Cards */
+    .project-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      transform: scale(1);
+    }
 
-        /* --- SEARCH & ACTIONS --- */
-        .search-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 28px;
-        }
+    .project-card.hide {
+      display: none;
+    }
 
-        .search-input {
-            flex: 1;
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 12px 18px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            outline: none;
-        }
+    .project-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--border-hover);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      background: var(--bg-card-hover);
+    }
 
-        .search-input:focus {
-            border-color: var(--teal-bright);
-            box-shadow: 0 0 15px var(--teal-glow);
-        }
+    .card-thumb {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+      background: #1a202c;
+    }
 
-        .btn-action {
-            background: var(--teal-accent);
-            color: #041f1e;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
 
-        .btn-action:hover {
-            background: var(--teal-bright);
-            box-shadow: 0 0 14px var(--teal-glow);
-        }
+    .project-card:hover .card-thumb img {
+      transform: scale(1.08);
+    }
 
-        /* --- CAROUSEL (SWIPEABLE) --- */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 0.82rem;
-            font-weight: 800;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+    .category-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10, 12, 16, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        .carousel-track {
-            display: flex;
-            gap: 18px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 15px;
-            cursor: grab;
-            scrollbar-width: none;
-        }
+    .card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
 
-        .carousel-track::-webkit-scrollbar { display: none; }
+    .project-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
 
-        .swipe-card {
-            flex: 0 0 320px;
-            scroll-snap-align: start;
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius);
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 180px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-            transition: border-color 0.2s;
-        }
+    .project-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
-        .swipe-card:hover {
-            border-color: var(--teal-bright);
-        }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+    }
 
-        .swipe-card .tag {
-            align-self: flex-start;
-            background: rgba(45, 212, 191, 0.15);
-            color: var(--teal-bright);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+    .view-details-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
 
-        .swipe-card .body {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #f0fdfa;
-            margin-bottom: 15px;
-            white-space: pre-line;
-        }
+    .view-details-btn:hover {
+      color: #a855f7;
+      gap: 10px;
+    }
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* ==========================================================================
+       6. SIDEBAR (SKILLS & TOOLS)
+       ========================================================================== */
+    .sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      position: sticky;
+      top: 90px;
+    }
 
-        .joke-id {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .copy-btn {
-            background: rgba(45, 212, 191, 0.1);
-            border: 1px solid var(--glass-border);
-            color: var(--teal-bright);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    .skill-group {
+      margin-bottom: 1.5rem;
+    }
 
-        .copy-btn:hover {
-            background: var(--teal-bright);
-            color: #041f1e;
-            font-weight: 700;
-        }
+    .skill-group:last-child {
+      margin-bottom: 0;
+    }
 
-        /* --- JOKE GRID --- */
-        .joke-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            margin-top: 12px;
-        }
+    .skill-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
 
-        .grid-card {
-            background: var(--glass-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
+    .tags-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
 
-        .grid-card:hover {
-            border-color: var(--teal-bright);
-            background: var(--glass-hover);
-        }
+    .tag {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
 
-        .grid-card .text {
-            font-size: 0.95rem;
-            margin-bottom: 14px;
-            color: #ccfbf1;
-            line-height: 1.4;
-            white-space: pre-line;
-        }
+    .tag:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+    }
 
-        /* --- RESPONSIVE MOBILE --- */
-        @media (max-width: 768px) {
-            .content-area {
-                margin-left: 0;
-                padding: 16px;
-            }
-            .sidebar {
-                width: 260px;
-                transform: translateX(-100%);
-            }
-            .sidebar.open-mobile {
-                transform: translateX(0);
-            }
-            .swipe-card {
-                flex: 0 0 270px;
-            }
-        }
-    </style>
+    /* ==========================================================================
+       7. CTA SECTION
+       ========================================================================== */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-lg);
+      padding: 4rem 2rem;
+      text-align: center;
+      margin-bottom: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .cta-desc {
+      color: var(--text-muted);
+      max-width: 500px;
+      margin: 0 auto 2rem;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+    }
+
+    /* ==========================================================================
+       8. MODAL POPUP
+       ========================================================================== */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1.5rem;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      z-index: 10;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      background: var(--accent-primary);
+    }
+
+    .modal-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-category {
+      display: inline-block;
+      font-size: 0.8rem;
+      color: var(--accent-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .modal-full-desc {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+
+    .modal-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       9. FOOTER
+       ========================================================================== */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      padding: 3rem 0;
+      background: var(--bg-main);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .social-icon {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .social-icon:hover {
+      color: var(--accent-primary);
+    }
+
+    /* ==========================================================================
+       10. RESPONSIVE MEDIA QUERIES
+       ========================================================================== */
+    /* Desktop (4 Columns) */
+    @media (min-width: 1200px) {
+      .portfolio-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Laptop (3 Columns) */
+    @media (max-width: 1199px) and (min-width: 900px) {
+      .portfolio-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Tablet (Layout Stack & 2 Columns Grid) */
+    @media (max-width: 899px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        order: 2;
+      }
+
+      .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Mobile (1 Column Grid & Nav Drawer) */
+    @media (max-width: 600px) {
+      .portfolio-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mobile-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: var(--bg-card);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        display: none;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .page-title {
+        font-size: 2.2rem;
+      }
+
+      .cta-title {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="app-container">
+  <!-- ==========================================================================
+       HEADER / NAVIGATION
+       ========================================================================== -->
+  <header class="header">
+    <div class="container nav-container">
+      <a href="./index.html" class="logo">
+        <i class="fa-solid fa-terminal"></i> Urban
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="./index.html" class="nav-link">Home</a></li>
+        <li><a href="./about.html" class="nav-link">About</a></li>
+        <li><a href="./portfolio.html" class="nav-link active">Portfolio</a></li>
+        <li><a href="./contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="mobile-toggle" id="mobileMenuBtn">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+    </div>
+  </header>
 
-        <!-- COLLAPSIBLE SIDEBAR MENU -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="brand">⚡ TEAL VAULT</div>
-                <button class="close-sidebar-btn" onclick="toggleSidebar()">✕</button>
+  <!-- ==========================================================================
+       PAGE HERO
+       ========================================================================== -->
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-title">Selected <span>Works & Projects</span></h1>
+      <p class="page-subtitle">A collection of code, stories, interactive experiences, and tech reviews built from my home base in Indonesia.</p>
+      
+      <!-- Filter Buttons -->
+      <div class="filter-container">
+        <button class="filter-btn active" data-filter="all">
+          <i class="fa-solid fa-border-all"></i> All Projects
+        </button>
+        <button class="filter-btn" data-filter="writing">
+          <i class="fa-solid fa-pen-nib"></i> Writing & Stories
+        </button>
+        <button class="filter-btn" data-filter="webdev">
+          <i class="fa-solid fa-code"></i> Web Development
+        </button>
+        <button class="filter-btn" data-filter="gamedesign">
+          <i class="fa-solid fa-gamepad"></i> Game Design
+        </button>
+        <button class="filter-btn" data-filter="creative">
+          <i class="fa-solid fa-microchip"></i> Creative & Gadgets
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       MAIN CONTENT (PORTFOLIO GRID + SIDEBAR)
+       ========================================================================== -->
+  <main class="container">
+    <div class="main-layout">
+      
+      <!-- Portfolio Cards Grid -->
+      <section class="portfolio-grid" id="portfolioGrid">
+        
+        <!-- Project 1: Writing -->
+        <article class="project-card" data-category="writing">
+          <div class="card-thumb">
+            <span class="category-badge">Writing</span>
+            <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80" alt="Chronicles of Archipelagos Cover">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Chronicles of Archipelagos</h3>
+            <p class="project-desc">A serialized sci-fi novella set in an alternate futuristic maritime world. Features deep lore and world-building.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="1">View Details <i class="fa-solid fa-arrow-right"></i></button>
             </div>
+          </div>
+        </article>
 
-            <div>
-                <div class="sidebar-title">Categories</div>
-                <nav class="category-nav">
-                    <button class="cat-btn active" onclick="filterCategory('all', this)">All Jokes</button>
-                    <button class="cat-btn" onclick="filterCategory('Dad Jokes', this)">Dad Jokes</button>
-                    <button class="cat-btn" onclick="filterCategory('Tech', this)">Tech Humor</button>
-                    <button class="cat-btn" onclick="filterCategory('Puns', this)">Puns</button>
-                    <button class="cat-btn" onclick="filterCategory('Dark Humor', this)">Dark Humor</button>
-                    <button class="cat-btn" onclick="filterCategory('One-Liners', this)">One-Liners</button>
-                </nav>
+        <!-- Project 2: Web Dev -->
+        <article class="project-card" data-category="webdev">
+          <div class="card-thumb">
+            <span class="category-badge">Web Dev</span>
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" alt="DevFlow Dashboard">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">DevFlow Productivity Suite</h3>
+            <p class="project-desc">A lightweight, browser-based dashboard built for developers to track tasks, notes, and local API testing endpoints.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="2">View Details <i class="fa-solid fa-arrow-right"></i></button>
             </div>
+          </div>
+        </article>
 
-            <div>
-                <div class="sidebar-title">Jump to Specific Joke</div>
-                <select id="jokePicker" class="picker-select" onchange="pickJoke(this.value)">
-                    <option value="">Select joke #...</option>
-                </select>
+        <!-- Project 3: Game Design -->
+        <article class="project-card" data-category="gamedesign">
+          <div class="card-thumb">
+            <span class="category-badge">Game Design</span>
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Nusantara Odyssey Game">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Nusantara Odyssey</h3>
+            <p class="project-desc">Game design document and playable 2D retro prototype exploring Indonesian folklore through tactical turn-based gameplay.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="3">View Details <i class="fa-solid fa-arrow-right"></i></button>
             </div>
-        </aside>
+          </div>
+        </article>
 
-        <!-- MAIN CONTENT STAGE -->
-        <main class="content-area" id="contentArea">
-
-            <!-- TOP ACTION BAR -->
-            <div class="top-bar">
-                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-                    <span>☰</span> Menu & Categories
-                </button>
+        <!-- Project 4: Creative / Gadgets -->
+        <article class="project-card" data-category="creative">
+          <div class="card-thumb">
+            <span class="category-badge">Creative</span>
+            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80" alt="Custom Mechanical Keyboard">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Modular Desk Companion</h3>
+            <p class="project-desc">A custom-built e-ink gadget displaying system stats and daily writing goals, powered by Raspberry Pi Pico.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="4">View Details <i class="fa-solid fa-arrow-right"></i></button>
             </div>
+          </div>
+        </article>
 
-            <!-- HUMAN INTRO HERO -->
-            <section class="intro-hero">
-                <span class="hero-badge">Welcome to the Vault</span>
-                <h1>No fluff. Just laughs.</h1>
-                <p>Need a quick laugh between compile times or trying to ruin your family's dinner with atrocious dad jokes? You're in the right place. Pick a category from the left menu or swipe through the cards below.</p>
-            </section>
-
-            <!-- SEARCH BAR & SURPRISE BUTTON -->
-            <div class="search-row">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search keywords..." oninput="executeSearch()">
-                <button class="btn-action" onclick="executeSearch()">Search</button>
-                <button class="btn-action" onclick="scrollRandom()">🎲 Random Joke</button>
+        <!-- Project 5: Writing -->
+        <article class="project-card" data-category="writing">
+          <div class="card-thumb">
+            <span class="category-badge">Writing</span>
+            <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" alt="Tech Essay Blog">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">The Digital Storyteller Essay</h3>
+            <p class="project-desc">An in-depth article analyzing how narrative mechanics in modern video games influence contemporary fiction writing.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="5">View Details <i class="fa-solid fa-arrow-right"></i></button>
             </div>
+          </div>
+        </article>
 
-            <!-- SWIPE CAROUSEL -->
-            <section style="margin-bottom: 35px;">
-                <div class="section-header">
-                    <span>Featured Swipe Carousel</span>
-                    <span>👈 Drag or Swipe 👉</span>
-                </div>
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Cards render here -->
-                </div>
-            </section>
+        <!-- Project 6: Web Dev -->
+        <article class="project-card" data-category="webdev">
+          <div class="card-thumb">
+            <span class="category-badge">Web Dev</span>
+            <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" alt="Minimalist Portfolio Template">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Aether Static Engine</h3>
+            <p class="project-desc">A lightning-fast static site generator tailored for writers and tech bloggers who prefer Markdown workflows.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="6">View Details <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </article>
 
-            <!-- ALL JOKES GRID -->
-            <section>
-                <div class="section-header">
-                    <span>Full Joke Vault</span>
-                    <span id="statsCount">Showing 0 jokes</span>
-                </div>
-                <div class="joke-grid" id="jokeGrid">
-                    <!-- Grid items render here -->
-                </div>
-            </section>
+        <!-- Project 7: Game Design -->
+        <article class="project-card" data-category="gamedesign">
+          <div class="card-thumb">
+            <span class="category-badge">Game Design</span>
+            <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80" alt="Indie Game Review Hub">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Level Architecture Breakdown</h3>
+            <p class="project-desc">A structural breakdown and analysis of level design and player pacing in classic isometric RPGs.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="7">View Details <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </article>
 
-        </main>
+        <!-- Project 8: Creative / Gadgets -->
+        <article class="project-card" data-category="creative">
+          <div class="card-thumb">
+            <span class="category-badge">Creative</span>
+            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80" alt="Mobile Tech Setup">
+          </div>
+          <div class="card-body">
+            <h3 class="project-title">Minimalist Tech Ecosystem</h3>
+            <p class="project-desc">A curated hardware configuration and software workflow review tailored for nomadic writers and coders.</p>
+            <div class="card-footer">
+              <button class="view-details-btn" data-id="8">View Details <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Sidebar: Skills & Tools -->
+      <aside class="sidebar">
+        <h3 class="sidebar-title">
+          <i class="fa-solid fa-screwdriver-wrench"></i> Skills & Tools
+        </h3>
+        
+        <div class="skill-group">
+          <div class="skill-label">Development</div>
+          <div class="tags-wrapper">
+            <span class="tag">HTML5 / CSS3</span>
+            <span class="tag">JavaScript (ES6+)</span>
+            <span class="tag">Node.js</span>
+            <span class="tag">Git & GitHub</span>
+            <span class="tag">Tailwind CSS</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Game Design</div>
+          <div class="tags-wrapper">
+            <span class="tag">Godot Engine</span>
+            <span class="tag">Twine</span>
+            <span class="tag">Level Design</span>
+            <span class="tag">Game Mechanics</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Writing & Craft</div>
+          <div class="tags-wrapper">
+            <span class="tag">Worldbuilding</span>
+            <span class="tag">Narrative Design</span>
+            <span class="tag">Tech Blogging</span>
+            <span class="tag">Copywriting</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-label">Hardware & Tech</div>
+          <div class="tags-wrapper">
+            <span class="tag">Gadget Modding</span>
+            <span class="tag">Raspberry Pi</span>
+            <span class="tag">Linux / Terminal</span>
+          </div>
+        </div>
+      </aside>
 
     </div>
 
-<script>
-    // Authentic, handpicked jokes across categories
-    const jokesDatabase = [
-        { id: 1, category: "Tech", text: "Why do programmers prefer dark mode?\nBecause light attracts bugs." },
-        { id: 2, category: "Tech", text: "There are 10 types of people in the world:\nThose who understand binary, and those who don't." },
-        { id: 3, category: "Tech", text: "A SQL query walks into a bar, walks up to two tables and asks:\n'Can I join you?'" },
-        { id: 4, category: "Tech", text: "Why was the JavaScript developer sad?\nBecause he didn't Node how to Express himself." },
-        { id: 5, category: "Tech", text: "An optimist sees the glass half full.\nA pessimist sees it half empty.\nA programmer sees the glass twice as large as necessary." },
-        { id: 6, category: "Dad Jokes", text: "I'm reading a book on anti-gravity.\nIt's impossible to put down!" },
-        { id: 7, category: "Dad Jokes", text: "Did you hear about the guy who invented Lifesavers?\nThey say he made a mint!" },
-        { id: 8, category: "Dad Jokes", text: "Why don't skeletons fight each other?\nThey don't have the guts." },
-        { id: 9, category: "Dad Jokes", text: "What do you call a fake noodle?\nAn impasta." },
-        { id: 10, category: "Dad Jokes", text: "Want to hear a joke about construction?\nI'm still working on it." },
-        { id: 11, category: "Puns", text: "Time flies like an arrow, but fruit flies like a banana." },
-        { id: 12, category: "Puns", text: "I was going to tell a time-travel joke, but you didn't like it." },
-        { id: 13, category: "Puns", text: "Geology rocks, but Geography is where it's at." },
-        { id: 14, category: "Puns", text: "I used to play piano by ear, but now I use my hands." },
-        { id: 15, category: "Dark Humor", text: "Give a man a match, and he'll be warm for a few hours.\nSet him on fire, and he'll be warm for the rest of his life." },
-        { id: 16, category: "Dark Humor", text: "My grandfather has the heart of a lion... and a lifetime ban from the zoo." },
-        { id: 17, category: "Dark Humor", text: "You don't need a parachute to go skydiving.\nYou need a parachute to go skydiving twice." },
-        { id: 18, category: "One-Liners", text: "My wife told me to stop impersonating a flamingo. I had to put my foot down." },
-        { id: 19, category: "One-Liners", text: "I'm on a seafood diet. Every time I see food, I eat it." },
-        { id: 20, category: "One-Liners", text: "I told my doctor that I broke my arm in two places. He told me to stop going to those places." }
-    ];
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+      <h2 class="cta-title">Have an interesting project in mind?</h2>
+      <p class="cta-desc">Whether you need compelling stories, game writing, or clean web applications—let's build something awesome together.</p>
+      <a href="./contact.html" class="btn-primary">
+        Get In Touch <i class="fa-solid fa-paper-plane"></i>
+      </a>
+    </section>
+  </main>
 
-    let currentCat = 'all';
+  <!-- ==========================================================================
+       PROJECT DETAIL MODAL
+       ========================================================================== -->
+  <div class="modal" id="projectModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <img src="" alt="" class="modal-img" id="modalImg">
+      <div class="modal-body">
+        <span class="modal-category" id="modalCategory">Category</span>
+        <h2 class="modal-title" id="modalTitle">Project Title</h2>
+        <div class="modal-meta" id="modalMeta">
+          <!-- Additional dynamic details will go here -->
+        </div>
+        <p class="modal-full-desc" id="modalDesc">Detailed project description will be injected here.</p>
+        <a href="#" class="btn-primary" id="modalLink" target="_blank" rel="noopener noreferrer">
+          Launch Project / Read More <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </div>
 
-    const sidebar = document.getElementById('sidebar');
-    const contentArea = document.getElementById('contentArea');
-    const carouselTrack = document.getElementById('carouselTrack');
-    const jokeGrid = document.getElementById('jokeGrid');
-    const jokePicker = document.getElementById('jokePicker');
-    const searchInput = document.getElementById('searchInput');
-    const statsCount = document.getElementById('statsCount');
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p class="footer-text">&copy; 2026 Urban. Designed & built in Indonesia.</p>
+      <div class="social-links">
+        <a href="#" class="social-icon" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="#" class="social-icon" aria-label="Itch.io"><i class="fa-brands fa-itch-io"></i></a>
+      </div>
+    </div>
+  </footer>
 
-    function initApp() {
-        populatePicker(jokesDatabase);
-        renderCarousel(jokesDatabase);
-        renderGrid(jokesDatabase);
-    }
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    // --------------------------------------------------------------------------
+    // 1. DATA SOURCE (Easy to add/edit projects here)
+    // --------------------------------------------------------------------------
+    const projectsData = {
+      1: {
+        title: "Chronicles of Archipelagos",
+        category: "Writing & Stories",
+        image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
+        description: "A serialized world-building endeavor capturing life across floating islands inspired by Maritime Southeast Asia. This project combines speculative fiction with rich cultural tropes, exploring themes of technology vs. nature.",
+        meta: "<span><i class='fa-regular fa-calendar'></i> 2025 - Present</span> • <span><i class='fa-regular fa-file-lines'></i> Web Series</span>",
+        link: "#"
+      },
+      2: {
+        title: "DevFlow Productivity Suite",
+        category: "Web Development",
+        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+        description: "Built to solve my own workflow friction, DevFlow is a minimalist dashboard that brings task management, markdown notes, and local storage API testing into one dark-themed tab.",
+        meta: "<span><i class='fa-solid fa-code'></i> JavaScript / HTML / CSS</span>",
+        link: "#"
+      },
+      3: {
+        title: "Nusantara Odyssey",
+        category: "Game Design",
+        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
+        description: "A tactical RPG concept complete with character systems, dialogue trees, and a functional 2D vertical slice constructed using Godot Engine.",
+        meta: "<span><i class='fa-solid fa-gamepad'></i> Godot / Twine</span>",
+        link: "#"
+      },
+      4: {
+        title: "Modular Desk Companion",
+        category: "Creative Projects",
+        image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=800&q=80",
+        description: "Custom hardware project utilizing an e-ink display driven by MicroPython. Displays real-time updates for writing word counts, system resources, and daily schedules.",
+        meta: "<span><i class='fa-solid fa-microchip'></i> Raspberry Pi / Python</span>",
+        link: "#"
+      },
+      5: {
+        title: "The Digital Storyteller Essay",
+        category: "Writing & Stories",
+        image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80",
+        description: "A published long-form essay dissecting emergent narrative mechanics in open-world games and how novelists can adapt these strategies for page-turning tension.",
+        meta: "<span><i class='fa-regular fa-clock'></i> 12 Min Read</span>",
+        link: "#"
+      },
+      6: {
+        title: "Aether Static Engine",
+        category: "Web Development",
+        image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+        description: "An open-source static generator designed specifically for authors and technical writers seeking zero-configuration deployment to GitHub Pages.",
+        meta: "<span><i class='fa-brands fa-github'></i> Open Source</span>",
+        link: "#"
+      },
+      7: {
+        title: "Level Architecture Breakdown",
+        category: "Game Design",
+        image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=800&q=80",
+        description: "A comparative study and visual teardown of level geometry, player leading techniques, and lighting setups across top-tier indie games.",
+        meta: "<span><i class='fa-solid fa-layer-group'></i> Case Study</span>",
+        link: "#"
+      },
+      8: {
+        title: "Minimalist Tech Ecosystem",
+        category: "Creative Projects",
+        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
+        description: "A comprehensive guide and ongoing experiment in building a distraction-free hardware and software workflow for deep focus work.",
+        meta: "<span><i class='fa-solid fa-laptop'></i> Hardware Review</span>",
+        link: "#"
+      }
+    };
 
-    // Toggle Sidebar Open / Close
-    function toggleSidebar() {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('open-mobile');
-        } else {
-            sidebar.classList.toggle('collapsed');
-            contentArea.classList.toggle('expanded');
-        }
-    }
+    // --------------------------------------------------------------------------
+    // 2. CATEGORY FILTERING LOGIC
+    // --------------------------------------------------------------------------
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
 
-    function populatePicker(list) {
-        jokePicker.innerHTML = '<option value="">Select joke #...</option>';
-        list.forEach(j => {
-            const opt = document.createElement('option');
-            opt.value = j.id;
-            opt.textContent = `#${j.id} - ${j.text.substring(0, 30).replace('\n', ' ')}...`;
-            jokePicker.appendChild(opt);
-        });
-    }
-
-    function renderCarousel(list) {
-        carouselTrack.innerHTML = '';
-        list.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'swipe-card';
-            card.id = `card-${j.id}`;
-            card.innerHTML = `
-                <span class="tag">${j.category}</span>
-                <div class="body">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="joke-id">#${j.id}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy 📋</button>
-                </div>
-            `;
-            carouselTrack.appendChild(card);
-        });
-    }
-
-    function renderGrid(list) {
-        jokeGrid.innerHTML = '';
-        statsCount.innerText = `Showing ${list.length} jokes`;
-        list.forEach(j => {
-            const card = document.createElement('div');
-            card.className = 'grid-card';
-            card.innerHTML = `
-                <div class="text">${escapeHtml(j.text)}</div>
-                <div class="card-footer">
-                    <span class="joke-id">#${j.id} • ${j.category}</span>
-                    <button class="copy-btn" onclick="copyText(this, \`${escapeJs(j.text)}\`)">Copy</button>
-                </div>
-            `;
-            jokeGrid.appendChild(card);
-        });
-    }
-
-    function filterCategory(cat, btn) {
-        currentCat = cat;
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Active Button Styling
+        filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        executeSearch();
-    }
 
-    function executeSearch() {
-        const query = searchInput.value.toLowerCase().trim();
-        const filtered = jokesDatabase.filter(j => {
-            const matchesCat = (currentCat === 'all' || j.category === currentCat);
-            const matchesQ = j.text.toLowerCase().includes(query);
-            return matchesCat && matchesQ;
+        const filterValue = btn.getAttribute('data-filter');
+
+        projectCards.forEach(card => {
+          if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+            card.classList.remove('hide');
+          } else {
+            card.classList.add('hide');
+          }
         });
+      });
+    });
 
-        populatePicker(filtered);
-        renderCarousel(filtered);
-        renderGrid(filtered);
-    }
+    // --------------------------------------------------------------------------
+    // 3. MODAL POPUP LOGIC
+    // --------------------------------------------------------------------------
+    const modal = document.getElementById('projectModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
 
-    function pickJoke(id) {
-        if (!id) return;
-        const targetCard = document.getElementById(`card-${id}`);
-        if (targetCard) {
-            targetCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    const modalImg = document.getElementById('modalImg');
+    const modalCategory = document.getElementById('modalCategory');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMeta = document.getElementById('modalMeta');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalLink = document.getElementById('modalLink');
+
+    viewDetailsBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const data = projectsData[id];
+
+        if (data) {
+          modalImg.src = data.image;
+          modalImg.alt = data.title;
+          modalCategory.textContent = data.category;
+          modalTitle.textContent = data.title;
+          modalMeta.innerHTML = data.meta;
+          modalDesc.textContent = data.description;
+          modalLink.href = data.link;
+
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent background scroll
         }
+      });
+    });
+
+    // Close Modal Events
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
     }
 
-    function scrollRandom() {
-        const cards = carouselTrack.children;
-        if (cards.length > 0) {
-            const idx = Math.floor(Math.random() * cards.length);
-            cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        }
-    }
+    modalCloseBtn.addEventListener('click', closeModal);
 
-    function copyText(btn, text) {
-        navigator.clipboard.writeText(text).then(() => {
-            const orig = btn.innerText;
-            btn.innerText = 'Copied! ✓';
-            setTimeout(() => btn.innerText = orig, 1500);
-        });
-    }
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
 
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace/>/g, "&gt;");
-    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
 
-    function escapeJs(str) {
-        return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-    }
+    // --------------------------------------------------------------------------
+    // 4. MOBILE MENU TOGGLE
+    // --------------------------------------------------------------------------
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
 
-    window.onload = initApp;
-</script>
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  </script>
 </body>
 </html>
-
