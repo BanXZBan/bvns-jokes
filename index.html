@@ -1,40 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio | Urban - Writer, Developer & Game Designer</title>
-  
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Urban • Builder & Storyteller</title>
   <style>
-    /* ==========================================================================
-       1. VARIABLES & RESET
-       ========================================================================== */
-    :root {
-      --bg-main: #0a0c10;
-      --bg-card: #12161f;
-      --bg-card-hover: #181e2a;
-      --bg-nav: rgba(10, 12, 16, 0.85);
-      --accent-primary: #6366f1; /* Indigo */
-      --accent-hover: #4f46e5;
-      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(99, 102, 241, 0.4);
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 24px;
-      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      --container-max: 1280px;
-    }
-
     * {
       margin: 0;
       padding: 0;
@@ -42,1051 +12,244 @@
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-main);
-      color: var(--text-main);
+      background: #1a1a2e;
+      color: #eee;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .container {
-      width: 90%;
-      max-width: var(--container-max);
-      margin: 0 auto;
-    }
-
-    /* ==========================================================================
-       2. NAVIGATION BAR
-       ========================================================================== */
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      background: var(--bg-nav);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-color);
-      transition: var(--transition);
-    }
-
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 70px;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-link {
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      transition: var(--transition);
-      position: relative;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      color: var(--text-main);
-    }
-
-    .nav-link.active::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: var(--accent-gradient);
-      border-radius: 2px;
-    }
-
-    .mobile-toggle {
-      display: none;
-      font-size: 1.5rem;
-      color: var(--text-main);
-      cursor: pointer;
-    }
-
-    /* ==========================================================================
-       3. HERO / PAGE HEADER
-       ========================================================================== */
-    .page-hero {
-      padding: 140px 0 60px;
-      text-align: center;
-      background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12) 0%, rgba(10, 12, 16, 0) 70%);
-    }
-
-    .page-title {
-      font-size: 3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      letter-spacing: -1px;
-    }
-
-    .page-title span {
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .page-subtitle {
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
-      font-size: 1.1rem;
-    }
-
-    /* ==========================================================================
-       4. FILTER CONTROLS
-       ========================================================================== */
-    .filter-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 3rem;
-    }
-
-    .filter-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 0.6rem 1.4rem;
-      border-radius: 30px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .filter-btn:hover {
-      border-color: var(--border-hover);
-      color: var(--text-main);
-    }
-
-    .filter-btn.active {
-      background: var(--accent-primary);
-      border-color: var(--accent-primary);
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
-    }
-
-    /* ==========================================================================
-       5. MAIN CONTENT LAYOUT (GRID + SIDEBAR)
-       ========================================================================== */
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 2.5rem;
-      align-items: start;
-      margin-bottom: 5rem;
-    }
-
-    /* Portfolio Grid */
-    .portfolio-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-
-    /* Project Cards */
-    .project-card {
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-color);
-      overflow: hidden;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .project-card.hide {
-      display: none;
-    }
-
-    .project-card:hover {
-      transform: translateY(-8px);
-      border-color: var(--border-hover);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-      background: var(--bg-card-hover);
-    }
-
-    .card-thumb {
-      position: relative;
-      height: 180px;
-      overflow: hidden;
-      background: #1a202c;
-    }
-
-    .card-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .project-card:hover .card-thumb img {
-      transform: scale(1.08);
-    }
-
-    .category-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(10, 12, 16, 0.75);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-main);
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .card-body {
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .project-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text-main);
-    }
-
-    .project-desc {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-bottom: 1.25rem;
-      flex-grow: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 0.75rem;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .view-details-btn {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--accent-primary);
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition);
-    }
-
-    .view-details-btn:hover {
-      color: #a855f7;
-      gap: 10px;
-    }
-
-    /* ==========================================================================
-       6. SIDEBAR (SKILLS & TOOLS)
-       ========================================================================== */
-    .sidebar {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      position: sticky;
-      top: 90px;
-    }
-
-    .sidebar-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1.25rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .skill-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .skill-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .skill-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      font-weight: 600;
-    }
-
-    .tags-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .tag {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      font-size: 0.8rem;
-      padding: 0.3rem 0.7rem;
-      border-radius: 6px;
-      transition: var(--transition);
-    }
-
-    .tag:hover {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: var(--accent-primary);
-    }
-
-    /* ==========================================================================
-       7. CTA SECTION
-       ========================================================================== */
-    .cta-section {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
-      border: 1px solid var(--border-hover);
-      border-radius: var(--radius-lg);
-      padding: 4rem 2rem;
-      text-align: center;
-      margin-bottom: 5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    .cta-desc {
-      color: var(--text-muted);
-      max-width: 500px;
-      margin: 0 auto 2rem;
-    }
-
-    .btn-primary {
-      background: var(--accent-gradient);
-      color: #fff;
-      font-weight: 600;
-      padding: 0.8rem 2rem;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: var(--transition);
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
-    }
-
-    /* ==========================================================================
-       8. MODAL POPUP
-       ========================================================================== */
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      padding: 1.5rem;
-    }
-
-    .modal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal-content {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      max-width: 700px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
-    }
-
-    .modal.active .modal-content {
-      transform: translateY(0);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: rgba(0,0,0,0.5);
-      border: none;
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
-      z-index: 10;
-      transition: var(--transition);
+      padding: 20px;
     }
 
-    .modal-close:hover {
-      background: var(--accent-primary);
-    }
-
-    .modal-img {
+    .card {
+      background: #16213e;
+      max-width: 760px;
       width: 100%;
-      height: 300px;
-      object-fit: cover;
+      padding: 40px 36px;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid #0f3460;
+      transition: transform 0.2s ease;
     }
 
-    .modal-body {
-      padding: 2rem;
+    .card:hover {
+      transform: scale(1.005);
     }
 
-    .modal-title {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .modal-category {
+    .badge {
       display: inline-block;
-      font-size: 0.8rem;
-      color: var(--accent-primary);
-      font-weight: 600;
+      background: #0f3460;
+      color: #ffd700;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 14px;
+      border-radius: 40px;
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
+      border: 1px solid #e94560;
     }
 
-    .modal-full-desc {
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      line-height: 1.8;
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 40%, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
 
-    .modal-meta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      color: var(--text-main);
-    }
-
-    /* ==========================================================================
-       9. FOOTER
-       ========================================================================== */
-    .footer {
-      border-top: 1px solid var(--border-color);
-      padding: 3rem 0;
-      background: var(--bg-main);
-    }
-
-    .footer-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
-
-    .footer-text {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 1.25rem;
-    }
-
-    .social-icon {
-      color: var(--text-muted);
+    .subhead {
       font-size: 1.2rem;
-      transition: var(--transition);
+      color: #a0b4d0;
+      margin-top: -4px;
+      margin-bottom: 24px;
+      border-left: 4px solid #e94560;
+      padding-left: 16px;
     }
 
-    .social-icon:hover {
-      color: var(--accent-primary);
+    .stats-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      background: #0f1a30;
+      padding: 16px 20px;
+      border-radius: 20px;
+      margin: 20px 0 28px 0;
+      border: 1px solid #1e3a5f;
     }
 
-    /* ==========================================================================
-       10. RESPONSIVE MEDIA QUERIES
-       ========================================================================== */
-    /* Desktop (4 Columns) */
-    @media (min-width: 1200px) {
-      .portfolio-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+    .stats-grid span {
+      font-size: 0.95rem;
     }
 
-    /* Laptop (3 Columns) */
-    @media (max-width: 1199px) and (min-width: 900px) {
-      .portfolio-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+    .stats-grid strong {
+      color: #ffd700;
+      font-weight: 600;
     }
 
-    /* Tablet (Layout Stack & 2 Columns Grid) */
-    @media (max-width: 899px) {
-      .main-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: static;
-        order: 2;
-      }
-
-      .portfolio-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, #0f3460, #e94560, #0f3460);
+      margin: 24px 0 28px 0;
+      border-radius: 4px;
+      opacity: 0.5;
     }
 
-    /* Mobile (1 Column Grid & Nav Drawer) */
-    @media (max-width: 600px) {
-      .portfolio-grid {
-        grid-template-columns: 1fr;
-      }
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      color: #ffd700;
+    }
 
-      .mobile-toggle {
-        display: block;
-      }
+    .minecraft-icon {
+      display: inline-block;
+      margin-right: 6px;
+      filter: drop-shadow(0 0 4px #ffd70055);
+    }
 
-      .nav-links {
-        position: absolute;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        background: var(--bg-card);
-        flex-direction: column;
-        padding: 1.5rem;
-        gap: 1.25rem;
-        border-bottom: 1px solid var(--border-color);
-        display: none;
-      }
+    .story-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0 0;
+    }
 
-      .nav-links.active {
-        display: flex;
-      }
+    .story-list li {
+      background: #0f1a30;
+      padding: 12px 18px;
+      margin-bottom: 10px;
+      border-radius: 16px;
+      border-left: 4px solid #e94560;
+      transition: 0.15s ease;
+      cursor: default;
+    }
 
-      .page-title {
-        font-size: 2.2rem;
-      }
+    .story-list li:hover {
+      background: #1a2a48;
+      border-left-color: #ffd700;
+    }
 
-      .cta-title {
-        font-size: 1.6rem;
-      }
+    .story-list li strong {
+      color: #ffd700;
+    }
+
+    .btn-mine {
+      display: inline-block;
+      background: #e94560;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 28px;
+      border-radius: 40px;
+      text-decoration: none;
+      margin-top: 18px;
+      border: none;
+      font-size: 1rem;
+      transition: 0.2s ease;
+      box-shadow: 0 0 12px #e9456044;
+    }
+
+    .btn-mine:hover {
+      background: #ff2e5b;
+      transform: scale(1.02);
+      box-shadow: 0 0 24px #e9456099;
+    }
+
+    .footnote {
+      margin-top: 32px;
+      color: #5a7a9a;
+      font-size: 0.85rem;
+      text-align: center;
+      border-top: 1px solid #1e3a5f;
+      padding-top: 20px;
+    }
+
+    .footnote span {
+      color: #ffd700;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 18px; }
+      h1 { font-size: 2.2rem; }
+      .stats-grid { flex-direction: column; gap: 6px; }
     }
   </style>
 </head>
 <body>
+  <div class="card">
+    <!-- BADGE -->
+    <div class="badge">⛏️ active player</div>
 
-  <!-- ==========================================================================
-       HEADER / NAVIGATION
-       ========================================================================== -->
-  <header class="header">
-    <div class="container nav-container">
-      <a href="./index.html" class="logo">
-        <i class="fa-solid fa-terminal"></i> Urban
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="./index.html" class="nav-link">Home</a></li>
-        <li><a href="./about.html" class="nav-link">About</a></li>
-        <li><a href="./portfolio.html" class="nav-link active">Portfolio</a></li>
-        <li><a href="./contact.html" class="nav-link">Contact</a></li>
-      </ul>
-      <div class="mobile-toggle" id="mobileMenuBtn">
-        <i class="fa-solid fa-bars"></i>
-      </div>
-    </div>
-  </header>
+    <!-- NAME + TAGLINE -->
+    <h1>Urban</h1>
+    <div class="subhead">5'3" · from Indonesia · builder & storyteller</div>
 
-  <!-- ==========================================================================
-       PAGE HERO
-       ========================================================================== -->
-  <section class="page-hero">
-    <div class="container">
-      <h1 class="page-title">Selected <span>Works & Projects</span></h1>
-      <p class="page-subtitle">A collection of code, stories, interactive experiences, and tech reviews built from my home base in Indonesia.</p>
-      
-      <!-- Filter Buttons -->
-      <div class="filter-container">
-        <button class="filter-btn active" data-filter="all">
-          <i class="fa-solid fa-border-all"></i> All Projects
-        </button>
-        <button class="filter-btn" data-filter="writing">
-          <i class="fa-solid fa-pen-nib"></i> Writing & Stories
-        </button>
-        <button class="filter-btn" data-filter="webdev">
-          <i class="fa-solid fa-code"></i> Web Development
-        </button>
-        <button class="filter-btn" data-filter="gamedesign">
-          <i class="fa-solid fa-gamepad"></i> Game Design
-        </button>
-        <button class="filter-btn" data-filter="creative">
-          <i class="fa-solid fa-microchip"></i> Creative & Gadgets
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==========================================================================
-       MAIN CONTENT (PORTFOLIO GRID + SIDEBAR)
-       ========================================================================== -->
-  <main class="container">
-    <div class="main-layout">
-      
-      <!-- Portfolio Cards Grid -->
-      <section class="portfolio-grid" id="portfolioGrid">
-        
-        <!-- Project 1: Writing -->
-        <article class="project-card" data-category="writing">
-          <div class="card-thumb">
-            <span class="category-badge">Writing</span>
-            <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80" alt="Chronicles of Archipelagos Cover">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Chronicles of Archipelagos</h3>
-            <p class="project-desc">A serialized sci-fi novella set in an alternate futuristic maritime world. Features deep lore and world-building.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="1">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 2: Web Dev -->
-        <article class="project-card" data-category="webdev">
-          <div class="card-thumb">
-            <span class="category-badge">Web Dev</span>
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" alt="DevFlow Dashboard">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">DevFlow Productivity Suite</h3>
-            <p class="project-desc">A lightweight, browser-based dashboard built for developers to track tasks, notes, and local API testing endpoints.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="2">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 3: Game Design -->
-        <article class="project-card" data-category="gamedesign">
-          <div class="card-thumb">
-            <span class="category-badge">Game Design</span>
-            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80" alt="Nusantara Odyssey Game">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Nusantara Odyssey</h3>
-            <p class="project-desc">Game design document and playable 2D retro prototype exploring Indonesian folklore through tactical turn-based gameplay.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="3">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 4: Creative / Gadgets -->
-        <article class="project-card" data-category="creative">
-          <div class="card-thumb">
-            <span class="category-badge">Creative</span>
-            <img src="https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80" alt="Custom Mechanical Keyboard">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Modular Desk Companion</h3>
-            <p class="project-desc">A custom-built e-ink gadget displaying system stats and daily writing goals, powered by Raspberry Pi Pico.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="4">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 5: Writing -->
-        <article class="project-card" data-category="writing">
-          <div class="card-thumb">
-            <span class="category-badge">Writing</span>
-            <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80" alt="Tech Essay Blog">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">The Digital Storyteller Essay</h3>
-            <p class="project-desc">An in-depth article analyzing how narrative mechanics in modern video games influence contemporary fiction writing.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="5">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 6: Web Dev -->
-        <article class="project-card" data-category="webdev">
-          <div class="card-thumb">
-            <span class="category-badge">Web Dev</span>
-            <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" alt="Minimalist Portfolio Template">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Aether Static Engine</h3>
-            <p class="project-desc">A lightning-fast static site generator tailored for writers and tech bloggers who prefer Markdown workflows.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="6">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 7: Game Design -->
-        <article class="project-card" data-category="gamedesign">
-          <div class="card-thumb">
-            <span class="category-badge">Game Design</span>
-            <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=600&q=80" alt="Indie Game Review Hub">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Level Architecture Breakdown</h3>
-            <p class="project-desc">A structural breakdown and analysis of level design and player pacing in classic isometric RPGs.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="7">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 8: Creative / Gadgets -->
-        <article class="project-card" data-category="creative">
-          <div class="card-thumb">
-            <span class="category-badge">Creative</span>
-            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80" alt="Mobile Tech Setup">
-          </div>
-          <div class="card-body">
-            <h3 class="project-title">Minimalist Tech Ecosystem</h3>
-            <p class="project-desc">A curated hardware configuration and software workflow review tailored for nomadic writers and coders.</p>
-            <div class="card-footer">
-              <button class="view-details-btn" data-id="8">View Details <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-          </div>
-        </article>
-
-      </section>
-
-      <!-- Sidebar: Skills & Tools -->
-      <aside class="sidebar">
-        <h3 class="sidebar-title">
-          <i class="fa-solid fa-screwdriver-wrench"></i> Skills & Tools
-        </h3>
-        
-        <div class="skill-group">
-          <div class="skill-label">Development</div>
-          <div class="tags-wrapper">
-            <span class="tag">HTML5 / CSS3</span>
-            <span class="tag">JavaScript (ES6+)</span>
-            <span class="tag">Node.js</span>
-            <span class="tag">Git & GitHub</span>
-            <span class="tag">Tailwind CSS</span>
-          </div>
-        </div>
-
-        <div class="skill-group">
-          <div class="skill-label">Game Design</div>
-          <div class="tags-wrapper">
-            <span class="tag">Godot Engine</span>
-            <span class="tag">Twine</span>
-            <span class="tag">Level Design</span>
-            <span class="tag">Game Mechanics</span>
-          </div>
-        </div>
-
-        <div class="skill-group">
-          <div class="skill-label">Writing & Craft</div>
-          <div class="tags-wrapper">
-            <span class="tag">Worldbuilding</span>
-            <span class="tag">Narrative Design</span>
-            <span class="tag">Tech Blogging</span>
-            <span class="tag">Copywriting</span>
-          </div>
-        </div>
-
-        <div class="skill-group">
-          <div class="skill-label">Hardware & Tech</div>
-          <div class="tags-wrapper">
-            <span class="tag">Gadget Modding</span>
-            <span class="tag">Raspberry Pi</span>
-            <span class="tag">Linux / Terminal</span>
-          </div>
-        </div>
-      </aside>
-
+    <!-- STATS / QUICK FACTS -->
+    <div class="stats-grid">
+      <span>📍 <strong>Indonesia</strong> — GMT+7</span>
+      <span>📏 <strong>5'3"</strong> (160 cm)</span>
+      <span>🎮 <strong>Minecraft</strong> · survival + creative</span>
+      <span>✍️ <strong>Writer</strong> · short stories & lore</span>
     </div>
 
-    <!-- Call to Action Section -->
-    <section class="cta-section">
-      <h2 class="cta-title">Have an interesting project in mind?</h2>
-      <p class="cta-desc">Whether you need compelling stories, game writing, or clean web applications—let's build something awesome together.</p>
-      <a href="./contact.html" class="btn-primary">
-        Get In Touch <i class="fa-solid fa-paper-plane"></i>
-      </a>
-    </section>
-  </main>
+    <div class="divider"></div>
 
-  <!-- ==========================================================================
-       PROJECT DETAIL MODAL
-       ========================================================================== -->
-  <div class="modal" id="projectModal">
-    <div class="modal-content">
-      <button class="modal-close" id="modalCloseBtn">&times;</button>
-      <img src="" alt="" class="modal-img" id="modalImg">
-      <div class="modal-body">
-        <span class="modal-category" id="modalCategory">Category</span>
-        <h2 class="modal-title" id="modalTitle">Project Title</h2>
-        <div class="modal-meta" id="modalMeta">
-          <!-- Additional dynamic details will go here -->
-        </div>
-        <p class="modal-full-desc" id="modalDesc">Detailed project description will be injected here.</p>
-        <a href="#" class="btn-primary" id="modalLink" target="_blank" rel="noopener noreferrer">
-          Launch Project / Read More <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-      </div>
+    <!-- MINECRAFT SECTION -->
+    <h2>
+      <span class="minecraft-icon">⛏️</span> Minecraft
+    </h2>
+    <p style="margin-bottom: 6px; color: #c0d0e8;">
+      I build, mine, explore, and sometimes fight creepers (badly).<br />
+      Favorite biome: <strong style="color: #ffd700;">Mushroom Fields</strong> · 
+      Favorite block: <strong style="color: #ffd700;">Spruce wood</strong>
+    </p>
+
+    <div style="background: #0f1a30; border-radius: 16px; padding: 12px 16px; margin: 12px 0 16px 0; border: 1px dashed #0f3460;">
+      <span style="color: #8ab4f8;">▶</span> currently building: <em style="color: #ddd;">a medieval port town on a mushroom island</em>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WRITING / STORIES -->
+    <h2>
+      <span style="margin-right: 6px;">📖</span> Stories I've written
+    </h2>
+    <ul class="story-list">
+      <li><strong>“The Last Chest”</strong> — a Minecraft-inspired tale about a locked chest that holds a forgotten player's final message.</li>
+      <li><strong>“Laut di Atas Awan”</strong> — a short story in Indonesian about a sky island and the girl who tried to reach it.</li>
+      <li><strong>“Urban's Logbook”</strong> — a collection of journal entries from my survival world, blended with fiction.</li>
+    </ul>
+
+    <!-- CTA -->
+    <a href="#" class="btn-mine" onclick="alert('📖 Coming soon: my full story archive + world tour!'); return false;">
+      📂 See my story vault
+    </a>
+
+    <!-- FOOTER -->
+    <div class="footnote">
+      <span>✦</span> built in survival mode · no mods, just vanilla me <span>✦</span>
     </div>
   </div>
 
-  <!-- ==========================================================================
-       FOOTER
-       ========================================================================== -->
-  <footer class="footer">
-    <div class="container footer-content">
-      <p class="footer-text">&copy; 2026 Urban. Designed & built in Indonesia.</p>
-      <div class="social-links">
-        <a href="#" class="social-icon" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-        <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="#" class="social-icon" aria-label="Itch.io"><i class="fa-brands fa-itch-io"></i></a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ==========================================================================
-       JAVASCRIPT LOGIC
-       ========================================================================== -->
   <script>
-    // --------------------------------------------------------------------------
-    // 1. DATA SOURCE (Easy to add/edit projects here)
-    // --------------------------------------------------------------------------
-    const projectsData = {
-      1: {
-        title: "Chronicles of Archipelagos",
-        category: "Writing & Stories",
-        image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=800&q=80",
-        description: "A serialized world-building endeavor capturing life across floating islands inspired by Maritime Southeast Asia. This project combines speculative fiction with rich cultural tropes, exploring themes of technology vs. nature.",
-        meta: "<span><i class='fa-regular fa-calendar'></i> 2025 - Present</span> • <span><i class='fa-regular fa-file-lines'></i> Web Series</span>",
-        link: "#"
-      },
-      2: {
-        title: "DevFlow Productivity Suite",
-        category: "Web Development",
-        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
-        description: "Built to solve my own workflow friction, DevFlow is a minimalist dashboard that brings task management, markdown notes, and local storage API testing into one dark-themed tab.",
-        meta: "<span><i class='fa-solid fa-code'></i> JavaScript / HTML / CSS</span>",
-        link: "#"
-      },
-      3: {
-        title: "Nusantara Odyssey",
-        category: "Game Design",
-        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
-        description: "A tactical RPG concept complete with character systems, dialogue trees, and a functional 2D vertical slice constructed using Godot Engine.",
-        meta: "<span><i class='fa-solid fa-gamepad'></i> Godot / Twine</span>",
-        link: "#"
-      },
-      4: {
-        title: "Modular Desk Companion",
-        category: "Creative Projects",
-        image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=800&q=80",
-        description: "Custom hardware project utilizing an e-ink display driven by MicroPython. Displays real-time updates for writing word counts, system resources, and daily schedules.",
-        meta: "<span><i class='fa-solid fa-microchip'></i> Raspberry Pi / Python</span>",
-        link: "#"
-      },
-      5: {
-        title: "The Digital Storyteller Essay",
-        category: "Writing & Stories",
-        image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80",
-        description: "A published long-form essay dissecting emergent narrative mechanics in open-world games and how novelists can adapt these strategies for page-turning tension.",
-        meta: "<span><i class='fa-regular fa-clock'></i> 12 Min Read</span>",
-        link: "#"
-      },
-      6: {
-        title: "Aether Static Engine",
-        category: "Web Development",
-        image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
-        description: "An open-source static generator designed specifically for authors and technical writers seeking zero-configuration deployment to GitHub Pages.",
-        meta: "<span><i class='fa-brands fa-github'></i> Open Source</span>",
-        link: "#"
-      },
-      7: {
-        title: "Level Architecture Breakdown",
-        category: "Game Design",
-        image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=800&q=80",
-        description: "A comparative study and visual teardown of level geometry, player leading techniques, and lighting setups across top-tier indie games.",
-        meta: "<span><i class='fa-solid fa-layer-group'></i> Case Study</span>",
-        link: "#"
-      },
-      8: {
-        title: "Minimalist Tech Ecosystem",
-        category: "Creative Projects",
-        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
-        description: "A comprehensive guide and ongoing experiment in building a distraction-free hardware and software workflow for deep focus work.",
-        meta: "<span><i class='fa-solid fa-laptop'></i> Hardware Review</span>",
-        link: "#"
-      }
-    };
-
-    // --------------------------------------------------------------------------
-    // 2. CATEGORY FILTERING LOGIC
-    // --------------------------------------------------------------------------
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const projectCards = document.querySelectorAll('.project-card');
-
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Active Button Styling
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const filterValue = btn.getAttribute('data-filter');
-
-        projectCards.forEach(card => {
-          if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-            card.classList.remove('hide');
-          } else {
-            card.classList.add('hide');
-          }
-        });
-      });
+    // Small interactive easter egg — click on the badge
+    document.querySelector('.badge')?.addEventListener('click', function() {
+      this.textContent = '🎮 found you!';
+      this.style.background = '#e94560';
+      this.style.color = '#fff';
+      setTimeout(() => {
+        this.textContent = '⛏️ active player';
+        this.style.background = '#0f3460';
+        this.style.color = '#ffd700';
+      }, 1800);
     });
 
-    // --------------------------------------------------------------------------
-    // 3. MODAL POPUP LOGIC
-    // --------------------------------------------------------------------------
-    const modal = document.getElementById('projectModal');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-    const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
-
-    const modalImg = document.getElementById('modalImg');
-    const modalCategory = document.getElementById('modalCategory');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMeta = document.getElementById('modalMeta');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalLink = document.getElementById('modalLink');
-
-    viewDetailsBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        const data = projectsData[id];
-
-        if (data) {
-          modalImg.src = data.image;
-          modalImg.alt = data.title;
-          modalCategory.textContent = data.category;
-          modalTitle.textContent = data.title;
-          modalMeta.innerHTML = data.meta;
-          modalDesc.textContent = data.description;
-          modalLink.href = data.link;
-
-          modal.classList.add('active');
-          document.body.style.overflow = 'hidden'; // Prevent background scroll
-        }
-      });
-    });
-
-    // Close Modal Events
-    function closeModal() {
-      modal.classList.remove('active');
-      document.body.style.overflow = 'auto';
-    }
-
-    modalCloseBtn.addEventListener('click', closeModal);
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeModal();
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
-      }
-    });
-
-    // --------------------------------------------------------------------------
-    // 4. MOBILE MENU TOGGLE
-    // --------------------------------------------------------------------------
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navLinks = document.getElementById('navLinks');
-
-    mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
+    // Console Easter egg
+    console.log('⛏️ Urban — 5\'3" of builder energy from Indonesia.');
+    console.log('📖 Keep writing. Keep mining.');
   </script>
 </body>
 </html>
