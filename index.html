@@ -3,253 +3,922 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Urban • Builder & Storyteller</title>
+  <title>Urban • Creator's Multiverse</title>
   <style>
+    /* ===== RESET & BASE ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
     body {
-      background: #1a1a2e;
-      color: #eee;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: #0a0f1e;
+      color: #e0f0ff;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ===== LOADING SCREEN ===== */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0a0f1e;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      transition: opacity 1.2s ease, visibility 1.2s ease;
     }
 
-    .card {
-      background: #16213e;
-      max-width: 760px;
-      width: 100%;
-      padding: 40px 36px;
-      border-radius: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-      border: 1px solid #0f3460;
-      transition: transform 0.2s ease;
+    #loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
     }
 
-    .card:hover {
-      transform: scale(1.005);
-    }
-
-    .badge {
-      display: inline-block;
-      background: #0f3460;
-      color: #ffd700;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 4px 14px;
-      border-radius: 40px;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      border: 1px solid #e94560;
-    }
-
-    h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff 40%, #ffd700);
+    .loader-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.4rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00d4ff, #00ff88, #00d4ff);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      display: inline-block;
+      animation: shimmer 2s ease-in-out infinite;
+      margin-bottom: 30px;
+      letter-spacing: 4px;
     }
 
-    .subhead {
-      font-size: 1.2rem;
-      color: #a0b4d0;
-      margin-top: -4px;
-      margin-bottom: 24px;
-      border-left: 4px solid #e94560;
-      padding-left: 16px;
+    @keyframes shimmer {
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
-    .stats-grid {
+    .loader-bar-track {
+      width: 280px;
+      height: 6px;
+      background: #1a2a3a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .loader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00d4ff, #00ff88, #00d4ff);
+      background-size: 200% 100%;
+      border-radius: 12px;
+      animation: fillProgress 2.8s ease-in-out forwards, barShimmer 1.4s linear infinite;
+    }
+
+    @keyframes fillProgress {
+      0% {
+        width: 0%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    @keyframes barShimmer {
+      0% {
+        background-position: 0% 0%;
+      }
+      100% {
+        background-position: 200% 0%;
+      }
+    }
+
+    .loader-text {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: #5a8aaa;
+      letter-spacing: 2px;
+      font-weight: 300;
+    }
+
+    /* ===== INTRO OVERLAY (LOKI) ===== */
+    #intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(10, 15, 30, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(6px);
+    }
+
+    #intro-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #intro-overlay.fade-out {
+      opacity: 0;
+      transform: scale(1.05);
+      pointer-events: none;
+    }
+
+    .loki-container {
+      text-align: center;
+      animation: lokiFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes lokiFloat {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(-1deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(1deg);
+      }
+    }
+
+    .loki-face {
+      font-size: 6rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.4));
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .loki-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00ff88, #00d4ff, #00ff88);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+    }
+
+    .loki-quote {
+      font-size: 1.1rem;
+      color: #8ac4e0;
+      margin-top: 16px;
+      font-style: italic;
+      letter-spacing: 1px;
+      border-left: 3px solid #00d4ff;
+      padding-left: 20px;
+      max-width: 500px;
+      opacity: 0.8;
+    }
+
+    .loki-sub {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: #4a7a8a;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: pulseText 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseText {
+      0%,
+      100% {
+        opacity: 0.4;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .skip-intro {
+      margin-top: 40px;
+      background: transparent;
+      border: 1px solid #2a5a6a;
+      color: #6aaac0;
+      padding: 10px 30px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+      letter-spacing: 2px;
+      font-family: 'Inter', sans-serif;
+      background: rgba(0, 212, 255, 0.05);
+    }
+
+    .skip-intro:hover {
+      background: rgba(0, 212, 255, 0.15);
+      border-color: #00d4ff;
+      color: #e0f0ff;
+      transform: scale(1.04);
+    }
+
+    /* ===== MAIN WEBSITE (visible after intro) ===== */
+    #main-site {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #0a0f1e;
+      position: relative;
+    }
+
+    #main-site.active {
+      display: block;
+    }
+
+    /* Animated background */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #0a0f1e 0%, #0d1a2b 30%, #0a2a2a 60%, #0d1a2b 80%, #0a0f1e 100%);
+      background-size: 400% 400%;
+      animation: bgFlow 18s ease-in-out infinite;
+    }
+
+    @keyframes bgFlow {
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+      25% {
+        background-position: 100% 0%;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      75% {
+        background-position: 0% 100%;
+      }
+    }
+
+    /* Floating particles (teal/cyan/green dots) */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: floatParticle linear infinite;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(110vh) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.15;
+      }
+      90% {
+        opacity: 0.15;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(720deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* ===== CONTENT WRAPPER ===== */
+    .content-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 28px 80px 28px;
+    }
+
+    /* ===== HEADER / NAV ===== */
+    .header {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px 20px;
-      background: #0f1a30;
-      padding: 16px 20px;
-      border-radius: 20px;
-      margin: 20px 0 28px 0;
-      border: 1px solid #1e3a5f;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 28px 0;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+      margin-bottom: 36px;
     }
 
-    .stats-grid span {
-      font-size: 0.95rem;
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
     }
 
-    .stats-grid strong {
-      color: #ffd700;
-      font-weight: 600;
-    }
-
-    .divider {
-      height: 2px;
-      background: linear-gradient(90deg, #0f3460, #e94560, #0f3460);
-      margin: 24px 0 28px 0;
-      border-radius: 4px;
+    .logo span {
+      font-weight: 300;
       opacity: 0.5;
+      font-size: 0.9rem;
+      -webkit-text-fill-color: #5a8aaa;
     }
 
-    h2 {
-      font-size: 1.5rem;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      color: #ffd700;
-    }
-
-    .minecraft-icon {
-      display: inline-block;
-      margin-right: 6px;
-      filter: drop-shadow(0 0 4px #ffd70055);
-    }
-
-    .story-list {
-      list-style: none;
-      padding: 0;
-      margin: 12px 0 0 0;
-    }
-
-    .story-list li {
-      background: #0f1a30;
-      padding: 12px 18px;
-      margin-bottom: 10px;
-      border-radius: 16px;
-      border-left: 4px solid #e94560;
-      transition: 0.15s ease;
-      cursor: default;
-    }
-
-    .story-list li:hover {
-      background: #1a2a48;
-      border-left-color: #ffd700;
-    }
-
-    .story-list li strong {
-      color: #ffd700;
-    }
-
-    .btn-mine {
-      display: inline-block;
-      background: #e94560;
-      color: #fff;
-      font-weight: 700;
-      padding: 10px 28px;
-      border-radius: 40px;
-      text-decoration: none;
-      margin-top: 18px;
-      border: none;
-      font-size: 1rem;
-      transition: 0.2s ease;
-      box-shadow: 0 0 12px #e9456044;
-    }
-
-    .btn-mine:hover {
-      background: #ff2e5b;
-      transform: scale(1.02);
-      box-shadow: 0 0 24px #e9456099;
-    }
-
-    .footnote {
-      margin-top: 32px;
-      color: #5a7a9a;
+    .nav-links {
+      display: flex;
+      gap: 24px;
       font-size: 0.85rem;
-      text-align: center;
-      border-top: 1px solid #1e3a5f;
-      padding-top: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
 
-    .footnote span {
+    .nav-links a {
+      color: #8ab4d0;
+      text-decoration: none;
+      transition: 0.3s ease;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a:hover {
+      color: #00d4ff;
+      border-bottom-color: #00d4ff;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 50px;
+    }
+
+    .hero-text {
+      flex: 1 1 300px;
+    }
+
+    .hero-text .greeting {
+      font-size: 0.85rem;
+      color: #5a9aaa;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero-text h1 {
+      font-size: 3.2rem;
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 300% 300%;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    .hero-text .tagline {
+      font-size: 1.2rem;
+      color: #8ac0d8;
+      margin-top: 12px;
+      font-weight: 300;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px 36px;
+      margin-top: 24px;
+      padding: 18px 22px;
+      background: rgba(0, 212, 255, 0.04);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 212, 255, 0.08);
+    }
+
+    .hero-stats .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-stats .stat-item .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: #5a8a9a;
+      letter-spacing: 1px;
+    }
+
+    .hero-stats .stat-item .value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e0f0ff;
+    }
+
+    .hero-stats .stat-item .value.teal {
+      color: #00d4ff;
+    }
+    .hero-stats .stat-item .value.cyan {
+      color: #00ffcc;
+    }
+    .hero-stats .stat-item .value.green {
+      color: #00ff88;
+    }
+
+    /* ===== SOCIAL LINKS ===== */
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 40px;
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.12);
+      color: #b0d8e8;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .social-btn:hover {
+      background: rgba(0, 212, 255, 0.14);
+      border-color: #00d4ff;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+    }
+
+    .social-btn.discord {
+      border-color: rgba(88, 101, 242, 0.3);
+    }
+    .social-btn.discord:hover {
+      background: rgba(88, 101, 242, 0.15);
+      border-color: #5865f2;
+    }
+
+    .social-btn.github {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .social-btn.github:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #fff;
+    }
+
+    .social-btn.tiktok {
+      border-color: rgba(255, 0, 80, 0.25);
+    }
+    .social-btn.tiktok:hover {
+      background: rgba(255, 0, 80, 0.12);
+      border-color: #ff0050;
+    }
+
+    .social-btn.instagram {
+      border-color: rgba(225, 48, 108, 0.25);
+    }
+    .social-btn.instagram:hover {
+      background: rgba(225, 48, 108, 0.12);
+      border-color: #e1306c;
+    }
+
+    /* ===== PROJECT FOLDER SYSTEM ===== */
+    .projects-section {
+      margin-top: 50px;
+    }
+
+    .projects-section h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #00d4ff;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .projects-section h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.2), transparent);
+    }
+
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .folder-item {
+      background: rgba(0, 212, 255, 0.03);
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      border-radius: 20px;
+      padding: 20px 22px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .folder-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.02), transparent);
+      opacity: 0;
+      transition: 0.4s ease;
+    }
+
+    .folder-item:hover::before {
+      opacity: 1;
+    }
+
+    .folder-item:hover {
+      border-color: rgba(0, 212, 255, 0.25);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 212, 255, 0.05);
+    }
+
+    .folder-item.active {
+      border-color: #00d4ff;
+      background: rgba(0, 212, 255, 0.06);
+    }
+
+    .folder-icon {
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+      display: block;
+      transition: 0.3s ease;
+    }
+
+    .folder-item:hover .folder-icon {
+      transform: scale(1.08) rotate(-2deg);
+    }
+
+    .folder-item .folder-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #e0f0ff;
+      margin-bottom: 4px;
+    }
+
+    .folder-item .folder-sub {
+      font-size: 0.8rem;
+      color: #6a9aaa;
+      font-weight: 300;
+    }
+
+    .folder-item .folder-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+      opacity: 0;
+    }
+
+    .folder-item.active .folder-expand {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(0, 212, 255, 0.08);
+    }
+
+    .folder-item .folder-expand p {
+      font-size: 0.9rem;
+      color: #b0d0e0;
+      line-height: 1.7;
+    }
+
+    .folder-item .folder-expand .badge-project {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 16px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(0, 212, 255, 0.08);
+      color: #00d4ff;
+      border: 1px solid rgba(0, 212, 255, 0.12);
+    }
+
+    .folder-item .folder-expand .badge-project.gold {
+      background: rgba(255, 215, 0, 0.08);
       color: #ffd700;
+      border-color: rgba(255, 215, 0, 0.15);
     }
 
-    @media (max-width: 480px) {
-      .card { padding: 28px 18px; }
-      h1 { font-size: 2.2rem; }
-      .stats-grid { flex-direction: column; gap: 6px; }
+    .click-hint {
+      font-size: 0.7rem;
+      color: #3a6a7a;
+      margin-top: 10px;
+      letter-spacing: 1px;
+      opacity: 0.6;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      margin-top: 60px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(0, 212, 255, 0.06);
+      text-align: center;
+      font-size: 0.8rem;
+      color: #3a6a7a;
+      letter-spacing: 1px;
+    }
+
+    .footer span {
+      color: #00d4ff;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0f1e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1a4a5a;
+      border-radius: 12px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2a6a7a;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .hero-text h1 {
+        font-size: 2.4rem;
+      }
+      .header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .social-links {
+        flex-direction: column;
+        width: 100%;
+      }
+      .social-btn {
+        justify-content: center;
+      }
+      .loki-name {
+        font-size: 1.8rem;
+      }
+      .loki-face {
+        font-size: 4rem;
+      }
+      .loader-title {
+        font-size: 1.6rem;
+      }
+      .folder-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <!-- BADGE -->
-    <div class="badge">⛏️ active player</div>
 
-    <!-- NAME + TAGLINE -->
-    <h1>Urban</h1>
-    <div class="subhead">5'3" · from Indonesia · builder & storyteller</div>
-
-    <!-- STATS / QUICK FACTS -->
-    <div class="stats-grid">
-      <span>📍 <strong>Indonesia</strong> — GMT+7</span>
-      <span>📏 <strong>5'3"</strong> (160 cm)</span>
-      <span>🎮 <strong>Minecraft</strong> · survival + creative</span>
-      <span>✍️ <strong>Writer</strong> · short stories & lore</span>
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen">
+    <div class="loader-title">◈ URBAN ◈</div>
+    <div class="loader-bar-track">
+      <div class="loader-bar-fill"></div>
     </div>
+    <div class="loader-text">loading multiverse...</div>
+  </div>
 
-    <div class="divider"></div>
-
-    <!-- MINECRAFT SECTION -->
-    <h2>
-      <span class="minecraft-icon">⛏️</span> Minecraft
-    </h2>
-    <p style="margin-bottom: 6px; color: #c0d0e8;">
-      I build, mine, explore, and sometimes fight creepers (badly).<br />
-      Favorite biome: <strong style="color: #ffd700;">Mushroom Fields</strong> · 
-      Favorite block: <strong style="color: #ffd700;">Spruce wood</strong>
-    </p>
-
-    <div style="background: #0f1a30; border-radius: 16px; padding: 12px 16px; margin: 12px 0 16px 0; border: 1px dashed #0f3460;">
-      <span style="color: #8ab4f8;">▶</span> currently building: <em style="color: #ddd;">a medieval port town on a mushroom island</em>
+  <!-- ===== INTRO OVERLAY (LOKI) ===== -->
+  <div id="intro-overlay">
+    <div class="loki-container">
+      <span class="loki-face">🌀</span>
+      <div class="loki-name">✦ L O K I ✦</div>
+      <div class="loki-quote">
+        “I don't write stories — I weave chaos into narratives.”
+      </div>
+      <div class="loki-sub">✦ trickster god · digital wanderer ✦</div>
+      <button class="skip-intro" id="enterBtn">⚡ enter the vault ⚡</button>
     </div>
+  </div>
 
-    <div class="divider"></div>
+  <!-- ===== MAIN SITE ===== -->
+  <div id="main-site">
+    <!-- Background -->
+    <div class="bg-canvas"></div>
 
-    <!-- WRITING / STORIES -->
-    <h2>
-      <span style="margin-right: 6px;">📖</span> Stories I've written
-    </h2>
-    <ul class="story-list">
-      <li><strong>“The Last Chest”</strong> — a Minecraft-inspired tale about a locked chest that holds a forgotten player's final message.</li>
-      <li><strong>“Laut di Atas Awan”</strong> — a short story in Indonesian about a sky island and the girl who tried to reach it.</li>
-      <li><strong>“Urban's Logbook”</strong> — a collection of journal entries from my survival world, blended with fiction.</li>
-    </ul>
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
 
-    <!-- CTA -->
-    <a href="#" class="btn-mine" onclick="alert('📖 Coming soon: my full story archive + world tour!'); return false;">
-      📂 See my story vault
-    </a>
+    <!-- Content -->
+    <div class="content-wrap">
 
-    <!-- FOOTER -->
-    <div class="footnote">
-      <span>✦</span> built in survival mode · no mods, just vanilla me <span>✦</span>
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">URBAN <span>// creator</span></div>
+        <div class="nav-links">
+          <a href="#">home</a>
+          <a href="#projects">projects</a>
+          <a href="#social">connect</a>
+        </div>
+      </header>
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-text">
+          <div class="greeting">✦ welcome to my multiverse</div>
+          <h1>Urban</h1>
+          <div class="tagline">5'2" · Indonesia · storyteller & mixtape editor</div>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="label">height</span>
+              <span class="value teal">5'2"</span>
+            </div>
+            <div class="stat-item">
+              <span class="label">from</span>
+              <span class="value cyan">Indonesia</span>
+            </div>
+            <div class="stat-item">
+              <span class="label">tiktok</span>
+              <span class="value green">2K followers</span>
+            </div>
+            <div class="stat-item">
+              <span class="label">vibes</span>
+              <span class="value teal">teal · cyan · green</span>
+            </div>
+          </div>
+
+          <div class="social-links" id="social">
+            <a href="https://discord.com/users/1333681207484874786" target="_blank" class="social-btn discord">💬 Discord</a>
+            <a href="https://github.com/BanXZban" target="_blank" class="social-btn github">🐙 GitHub</a>
+            <a href="https://www.tiktok.com/@frbann1" target="_blank" class="social-btn tiktok">🎵 TikTok</a>
+            <a href="https://www.instagram.com/bvnka1" target="_blank" class="social-btn instagram">📸 Instagram</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="projects-section" id="projects">
+        <h2>📁 active projects</h2>
+
+        <div class="folder-grid">
+
+          <!-- FOLDER 1 -->
+          <div class="folder-item" onclick="toggleFolder(this)">
+            <span class="folder-icon">📂</span>
+            <div class="folder-title">The God Of Stories</div>
+            <div class="folder-sub">Creator's Choice · series</div>
+            <div class="folder-expand">
+              <p>
+                A narrative-driven project where the protagonist discovers they're
+                a character in a story being written by a higher entity —
+                and must rewrite their own fate.
+              </p>
+              <span class="badge-project gold">✦ active · chapter 4</span>
+            </div>
+            <div class="click-hint">↕ click to expand</div>
+          </div>
+
+          <!-- FOLDER 2 -->
+          <div class="folder-item" onclick="toggleFolder(this)">
+            <span class="folder-icon">📂</span>
+            <div class="folder-title">The Khaos Lord</div>
+            <div class="folder-sub">dark fantasy · novella</div>
+            <div class="folder-expand">
+              <p>
+                In a realm where order is enforced by divine law, one being
+                embraces pure chaos — and becomes the Khaos Lord. A story
+                about rebellion, identity, and breaking the cycle.
+              </p>
+              <span class="badge-project">⚡ worldbuilding phase</span>
+            </div>
+            <div class="click-hint">↕ click to expand</div>
+          </div>
+
+          <!-- FOLDER 3 (mixtape) -->
+          <div class="folder-item" onclick="toggleFolder(this)">
+            <span class="folder-icon">🎧</span>
+            <div class="folder-title">Mixtape Edits</div>
+            <div class="folder-sub">2K followers · TikTok</div>
+            <div class="folder-expand">
+              <p>
+                Professional mixtape editing — blending tracks, transitions,
+                and vibes. Currently working on a cyberpunk-themed mix
+                inspired by the stories I write.
+              </p>
+              <span class="badge-project">🎵 15+ mixes published</span>
+            </div>
+            <div class="click-hint">↕ click to expand</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <span>✦</span> built by Urban · 2026 · all stories are doors <span>✦</span>
+      </footer>
+
     </div>
   </div>
 
   <script>
-    // Small interactive easter egg — click on the badge
-    document.querySelector('.badge')?.addEventListener('click', function() {
-      this.textContent = '🎮 found you!';
-      this.style.background = '#e94560';
-      this.style.color = '#fff';
-      setTimeout(() => {
-        this.textContent = '⛏️ active player';
-        this.style.background = '#0f3460';
-        this.style.color = '#ffd700';
-      }, 1800);
-    });
+    // ===== TOGGLE FOLDER =====
+    function toggleFolder(el) {
+      el.classList.toggle('active');
+    }
 
-    // Console Easter egg
-    console.log('⛏️ Urban — 5\'3" of builder energy from Indonesia.');
-    console.log('📖 Keep writing. Keep mining.');
+    // ===== PARTICLES =====
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const colors = ['#00d4ff', '#00ff88', '#00ffcc', '#1affd4'];
+      for (let i = 0; i < 45; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = 4 + Math.random() * 12;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.animationDuration = 18 + Math.random() * 30 + 's';
+        p.style.animationDelay = Math.random() * 20 + 's';
+        p.style.opacity = 0.06 + Math.random() * 0.12;
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // ===== LOADING + INTRO SEQUENCE =====
+    window.addEventListener('load', function() {
+      const loading = document.getElementById('loading-screen');
+      const intro = document.getElementById('intro-overlay');
+      const mainSite = document.getElementById('main-site');
+      const enterBtn = document.getElementById('enterBtn');
+
+      // After loading bar finishes (3s), show intro
+      setTimeout(() => {
+        loading.classList.add('hidden');
+        intro.classList.add('active');
+      }, 3200);
+
+      // Enter button -> show main site
+      function enterSite() {
+        intro.classList.add('fade-out');
+        setTimeout(() => {
+          intro.classList.remove('active');
+          intro.style.display = 'none';
+          mainSite.classList.add('active');
+          document.body.style.overflow = 'auto';
+        }, 1200);
+      }
+
+      enterBtn.addEventListener('click', enterSite);
+
+      // Also allow clicking anywhere on intro (for fast access)
+      intro.addEventListener('click', function(e) {
+        if (e.target === intro || e.target.closest('.loki-container')) {
+          enterSite();
+        }
+      });
+
+      // Keyboard: press Enter or Space to skip
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (intro.classList.contains('active')) {
+            enterSite();
+            e.preventDefault();
+          }
+        }
+      });
+    });
   </script>
+
 </body>
 </html>
